@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSCM - Login Sistem Rantai Pasok Jasa</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+  <div class="login-wrapper">
+    <!-- Window decorative dots -->
+    <div class="window-dots" style="margin-bottom: 1.5rem;">
+      <span class="dot dot-red"></span>
+      <span class="dot dot-yellow"></span>
+      <span class="dot dot-green"></span>
+    </div>
+
+    <!-- Brand Header -->
+    <div class="login-brand">
+      <div class="login-logo-box">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <path d="M16 2L3 9.5V22.5L16 30L29 22.5V9.5L16 2Z" stroke="#1a62ff" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M16 2V30M3 9.5L29 22.5M29 9.5L3 22.5" stroke="#1a62ff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2>SSCM<strong>.</strong></h2>
+      <p class="login-subtitle">Service Supply Chain Management • Bengkel & Salon Terpadu</p>
+    </div>
+
+    <!-- Login Form -->
+    <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-with-icon">
+          <span class="input-icon">👤</span>
+          <input type="text" id="username" placeholder="Masukkan username" value="admin" required autofocus>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-with-icon">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="password" placeholder="Masukkan password" value="admin123" required>
+        </div>
+      </div>
+
+      <div class="login-hint">
+        <span>💡 Akun demo: <b>admin</b> / <code>admin123</code> atau <b>kasir</b> / <code>kasir123</code></span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-login" id="loginBtn">
+        <span>Masuk ke Dashboard</span>
+        <span class="arrow">➔</span>
+      </button>
+
+      <div class="login-alert" id="loginAlert" style="display: none;"></div>
+    </form>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    // Auto redirect if already logged in
+    if (API.getToken()) {
+      window.location.href = '/dashboard';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const alert = document.getElementById('loginAlert');
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>Memverifikasi...</span>';
+      alert.style.display = 'none';
+
+      try {
+        const res = await API.post('/auth/login', { username, password });
+        if (res.success && res.token) {
+          API.setToken(res.token);
+          API.setUser(res.user);
+          window.location.href = '/dashboard';
+        } else {
+          throw new Error(res.message || 'Login gagal');
+        }
+      } catch (err) {
+        alert.textContent = err.message || 'Koneksi gagal ke server';
+        alert.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<span>Masuk ke Dashboard</span><span class="arrow">➔</span>';
+      }
+    }
+  </script>
+</body>
+</html>
