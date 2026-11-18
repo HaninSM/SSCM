@@ -2,11 +2,16 @@ const bcrypt = require('bcryptjs');
 
 exports.seed = async function(knex) {
   // Clear existing tables in reverse order of FKs
+  await knex('warranty_claim_items').del();
+  await knex('warranty_claims').del();
+  await knex('expenses').del();
+  await knex('warranty_policies').del();
   await knex('commission_logs').del();
   await knex('transaction_payments').del();
   await knex('transactions').del();
   await knex('service_order_items').del();
   await knex('service_orders').del();
+  await knex('customer_assets').del();
   await knex('inventory_batches').del();
   await knex('items').del();
   await knex('service_staff').del();
@@ -75,40 +80,85 @@ exports.seed = async function(knex) {
   const staffMap = {};
   staff.forEach(s => { staffMap[s.staff_code] = s; });
 
-  // 5. Inventory Batches (FIFO)
+  // 5. Customer Assets (Kendaraan & Rekam Medis Salon)
+  const assets = await knex('customer_assets').insert([
+    {
+      asset_type: 'VEHICLE',
+      identifier: 'B 4128 SZZ',
+      customer_name: 'Hendra Gunawan',
+      customer_phone: '081234567890',
+      brand_model: 'Honda Vario 160 (Hitam Doff)',
+      current_odometer: 12450.00,
+      last_service_date: new Date().toISOString()
+    },
+    {
+      asset_type: 'BEAUTY_PROFILE',
+      identifier: 'CUST-SLN-001',
+      customer_name: 'Jessica Melina',
+      customer_phone: '085712349988',
+      brand_model: 'Rambut Bob Pendek (Kulit Sensitif)',
+      allergy_notes: 'PERHATIAN: Riwayat alergi terhadap zat amonia tinggi & sulfur! Gunakan produk organik/herbal.',
+      formula_notes: 'Formula Terakhir: Creambath Aloe Vera 150g + 1 Ampul Serum Argan.',
+      last_service_date: new Date().toISOString()
+    },
+    {
+      asset_type: 'VEHICLE',
+      identifier: 'D 1944 AD',
+      customer_name: 'Bambang Sudiro',
+      customer_phone: '081399887766',
+      brand_model: 'Yamaha NMAX 155 (Biru Metalik)',
+      current_odometer: 18200.00,
+      last_service_date: new Date(Date.now() - 3 * 86400000).toISOString()
+    }
+  ]).returning('*');
+
+  const assetMap = {};
+  assets.forEach(a => { assetMap[a.identifier] = a; });
+
+  // 6. Warranty Policies
+  await knex('warranty_policies').insert([
+    { item_id: itemMap['SRV-W01'].id, policy_name: 'Garansi Servis Ringan & Tune-Up 14 Hari', warranty_days: 14, warranty_km: 1000.00, claim_action: 'FREE_REWORK' },
+    { item_id: itemMap['SRV-W02'].id, policy_name: 'Garansi Ganti Oli & Rem 7 Hari', warranty_days: 7, warranty_km: 500.00, claim_action: 'FREE_REWORK' },
+    { item_id: itemMap['SRV-S01'].id, policy_name: 'Garansi Revisi Potong Rambut 3 Hari', warranty_days: 3, warranty_km: 0.00, claim_action: 'FREE_REWORK' },
+    { item_id: itemMap['SRV-S02'].id, policy_name: 'Garansi Retouch Rambut & Treatment 7 Hari', warranty_days: 7, warranty_km: 0.00, claim_action: 'FREE_REWORK' },
+    { item_id: itemMap['PRT-W03'].id, policy_name: 'Garansi Suku Cadang Kampas Rem 30 Hari', warranty_days: 30, warranty_km: 2000.00, claim_action: 'PART_REPLACEMENT' }
+  ]);
+
+  // 7. Inventory Batches (FIFO)
   await knex('inventory_batches').insert([
-    // Oli Batch 1 & 2
     { item_id: itemMap['PRT-W01'].id, batch_number: 'BATCH-OLI-202611-01', initial_quantity: 12, remaining_quantity: 12, cost_per_unit: 47000, received_date: '2026-11-01' },
     { item_id: itemMap['PRT-W01'].id, batch_number: 'BATCH-OLI-202611-02', initial_quantity: 12, remaining_quantity: 12, cost_per_unit: 49000, received_date: '2026-11-10' },
-    // Busi
     { item_id: itemMap['PRT-W02'].id, batch_number: 'BATCH-BUSI-01', initial_quantity: 15, remaining_quantity: 15, cost_per_unit: 24000, received_date: '2026-11-05' },
-    // Kampas Rem
     { item_id: itemMap['PRT-W03'].id, batch_number: 'BATCH-REM-01', initial_quantity: 10, remaining_quantity: 10, cost_per_unit: 38000, received_date: '2026-11-05' },
-    // Salon Serum & Krim
     { item_id: itemMap['CSM-S01'].id, batch_number: 'BATCH-SRM-01', initial_quantity: 30, remaining_quantity: 30, cost_per_unit: 20000, received_date: '2026-11-02' },
     { item_id: itemMap['CSM-S02'].id, batch_number: 'BATCH-CRM-01', initial_quantity: 18, remaining_quantity: 18, cost_per_unit: 25000, received_date: '2026-11-04' },
     { item_id: itemMap['CSM-S03'].id, batch_number: 'BATCH-AMP-01', initial_quantity: 20, remaining_quantity: 20, cost_per_unit: 32000, received_date: '2026-11-08' }
   ]);
 
-  // 6. Seed Service Orders
-  // Order 1: Workshop - IN_PROGRESS (Bay 1, Mekanik Budi)
+  // 8. Seed Service Orders
   const now = new Date();
   const start1 = new Date(now.getTime() - 30 * 60000).toISOString();
   const end1 = new Date(now.getTime() + 30 * 60000).toISOString();
+  const expDate14 = new Date(now.getTime() + 14 * 86400000).toISOString();
 
+  // Order 1: Workshop - IN_PROGRESS
   const [order1] = await knex('service_orders').insert({
     order_number: 'SPK-W202611-001',
     business_type: 'WORKSHOP',
     customer_name: 'Hendra Gunawan',
     customer_phone: '081234567890',
     asset_identifier: 'B 4128 SZZ (Honda Vario 160)',
+    customer_asset_id: assetMap['B 4128 SZZ'].id,
+    odometer_km: 12450.00,
+    warranty_exp_date: expDate14,
+    warranty_exp_km: 13450.00,
     scheduled_start: start1,
     scheduled_end: end1,
     actual_start: start1,
     resource_id: resMap['BAY-01'].id,
     staff_id: staffMap['MEC-01'].id,
     status: 'IN_PROGRESS',
-    notes: 'Tarikan motor brebet pada rpm rendah, minta ganti oli juga',
+    notes: 'Tarikan motor brebet pada rpm rendah, ganti oli dan cek busi',
     total_service_amount: 75000,
     total_consumable_amount: 65000,
     grand_total: 140000
@@ -119,13 +169,16 @@ exports.seed = async function(knex) {
     { service_order_id: order1.id, item_id: itemMap['PRT-W01'].id, item_type: 'CONSUMABLE', item_name: 'Oli Mesin Matic 10W-30 0.8L', qty: 1, unit_price: 65000, subtotal: 65000, staff_id: staffMap['MEC-01'].id }
   ]);
 
-  // Order 2: Salon - READY_TO_PAY (Kursi 1, Stylist Dewi)
+  // Order 2: Salon - READY_TO_PAY (with Allergy Note verified)
+  const expDate7 = new Date(now.getTime() + 7 * 86400000).toISOString();
   const [order2] = await knex('service_orders').insert({
     order_number: 'SPK-S202611-002',
     business_type: 'SALON',
     customer_name: 'Jessica Melina',
     customer_phone: '085712349988',
-    asset_identifier: 'Rambut Layer Pendek (Kulit Sensitif)',
+    asset_identifier: 'Rambut Bob Pendek (Kulit Sensitif)',
+    customer_asset_id: assetMap['CUST-SLN-001'].id,
+    warranty_exp_date: expDate7,
     scheduled_start: start1,
     scheduled_end: end1,
     actual_start: start1,
@@ -133,7 +186,7 @@ exports.seed = async function(knex) {
     resource_id: resMap['CHR-01'].id,
     staff_id: staffMap['STY-01'].id,
     status: 'READY_TO_PAY',
-    notes: 'Haircut + Creambath & Serum Argan. Pelanggan sangat puas.',
+    notes: 'Creambath + Serum Argan. Terkonfirmasi bebas bahan amonia.',
     total_service_amount: 155000,
     total_consumable_amount: 75000,
     grand_total: 230000
@@ -146,26 +199,49 @@ exports.seed = async function(knex) {
     { service_order_id: order2.id, item_id: itemMap['CSM-S02'].id, item_type: 'CONSUMABLE', item_name: 'Krim Masker Creambath Lidah Buaya 250g', qty: 1, unit_price: 40000, subtotal: 40000, staff_id: staffMap['STY-01'].id }
   ]);
 
-  // Order 3: Workshop - BOOKED / RESERVASI NANTI SORE
-  const futureStart = new Date(now.getTime() + 120 * 60000).toISOString();
-  const futureEnd = new Date(now.getTime() + 180 * 60000).toISOString();
-
-  await knex('service_orders').insert({
-    order_number: 'SPK-W202611-003',
+  // Order 3: Completed Order with Active Warranty (Order Bambang Sudiro 3 days ago)
+  const pastDate = new Date(now.getTime() - 3 * 86400000).toISOString();
+  const [order3] = await knex('service_orders').insert({
+    order_number: 'SPK-W202611-000',
     business_type: 'WORKSHOP',
     customer_name: 'Bambang Sudiro',
     customer_phone: '081399887766',
     asset_identifier: 'D 1944 AD (Yamaha NMAX)',
-    scheduled_start: futureStart,
-    scheduled_end: futureEnd,
+    customer_asset_id: assetMap['D 1944 AD'].id,
+    odometer_km: 18200.00,
+    warranty_exp_date: new Date(now.getTime() + 11 * 86400000).toISOString(),
+    warranty_exp_km: 19200.00,
+    scheduled_start: pastDate,
+    scheduled_end: pastDate,
+    actual_start: pastDate,
+    actual_end: pastDate,
     resource_id: resMap['BAY-02'].id,
     staff_id: staffMap['MEC-02'].id,
-    status: 'BOOKED',
-    notes: 'Reservasi servis ringan dan ganti kampas rem',
+    status: 'COMPLETED',
+    notes: 'Ganti kampas rem cakram depan dan servis berkala',
     total_service_amount: 75000,
     total_consumable_amount: 55000,
     grand_total: 130000
-  });
+  }).returning('*');
 
-  console.log('✅ Seed data successfully populated!');
+  await knex('service_order_items').insert([
+    { service_order_id: order3.id, item_id: itemMap['SRV-W01'].id, item_type: 'SERVICE', item_name: 'Servis Ringan & Tune Up Injeksi', qty: 1, unit_price: 75000, subtotal: 75000, staff_id: staffMap['MEC-02'].id },
+    { service_order_id: order3.id, item_id: itemMap['PRT-W03'].id, item_type: 'CONSUMABLE', item_name: 'Kampas Rem Cakram Depan', qty: 1, unit_price: 55000, subtotal: 55000, staff_id: staffMap['MEC-02'].id }
+  ]);
+
+  // 9. Seed Sample Warranty Claim for Order 3 (Bambang Sudiro - Kampas rem bunyi)
+  const [claim1] = await knex('warranty_claims').insert({
+    claim_number: 'CLM-202611-001',
+    original_service_order_id: order3.id,
+    customer_asset_id: assetMap['D 1944 AD'].id,
+    claim_date: now.toISOString(),
+    claim_odometer: 18350.00, // Menambah 150 KM (Masih dalam garansi 1.000 KM)
+    complaint_reason: 'Rem depan berdecit kencang saat deselerasi setelah 3 hari servis',
+    inspection_result: 'Kaliper rem agak longgar pada pin pengunci kampas rem',
+    root_cause: 'WORKMANSHIP_ERROR',
+    status: 'SUBMITTED',
+    total_claim_cost: 0.00
+  }).returning('*');
+
+  console.log('✅ Seed data with Assets & Warranty Claims successfully populated!');
 };

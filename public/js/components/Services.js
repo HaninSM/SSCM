@@ -569,11 +569,23 @@ const Services = {
               </table>
             </div>
 
-            <div class="modal-footer" style="padding: 16px 0 0 0;">
-              <button class="btn btn-secondary" onclick="App.closeModal()">Tutup</button>
-              ${order.status === 'READY_TO_PAY' ? `
-                <button class="btn btn-primary" onclick="App.closeModal(); POS.loadServiceOrderToCart(${order.id});">Buka di Kasir POS ➔</button>
-              ` : ''}
+            <div class="modal-footer" style="padding: 16px 0 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary btn-sm" onclick="App.closeModal(); App.navigate('warranty'); setTimeout(() => { Warranty.switchTab('assets'); const inp = document.getElementById('assetSearchInput'); if (inp) { inp.value = '${order.asset_identifier}'; Warranty.handleAssetSearch(); } }, 200);">
+                  🚗 Riwayat Aset Ini
+                </button>
+                ${order.status === 'COMPLETED' ? `
+                  <button class="btn btn-secondary btn-sm" onclick="App.closeModal(); App.navigate('warranty'); setTimeout(() => { Warranty.openSubmitClaimModalForOrder(${order.id}, '${order.order_number}', ${order.odometer_km || 0}); }, 200);">
+                    🛡️ Ajukan Klaim Garansi
+                  </button>
+                ` : ''}
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary" onclick="App.closeModal()">Tutup</button>
+                ${order.status === 'READY_TO_PAY' ? `
+                  <button class="btn btn-primary" onclick="App.closeModal(); POS.loadServiceOrderToCart(${order.id});">Buka di Kasir POS ➔</button>
+                ` : ''}
+              </div>
             </div>
           </div>
         </div>

@@ -52,6 +52,7 @@ const App = {
       'dashboard': 'Dashboard',
       'services': 'Layanan & Antrean (SSCM)',
       'pos': 'Kasir POS & Split Payment',
+      'warranty': 'Aset & Klaim Garansi',
       'commissions': 'Rekapitulasi Komisi Karyawan',
       'items': 'Katalog Jasa & Stok Bahan'
     };
@@ -70,6 +71,9 @@ const App = {
         break;
       case 'pos':
         POS.render();
+        break;
+      case 'warranty':
+        Warranty.render();
         break;
       case 'commissions':
         Commissions.render();

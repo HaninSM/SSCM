@@ -9,6 +9,8 @@ const serviceRoutes = require('./src/routes/services');
 const posRoutes = require('./src/routes/pos');
 const commissionRoutes = require('./src/routes/commissions');
 const itemRoutes = require('./src/routes/items');
+const assetRoutes = require('./src/routes/assets');
+const warrantyRoutes = require('./src/routes/warranties');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +30,8 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/pos', posRoutes);
 app.use('/api/commissions', commissionRoutes);
 app.use('/api/items', itemRoutes);
+app.use('/api/assets', assetRoutes);
+app.use('/api/warranties', warrantyRoutes);
 
 // SPA fallback — serve dashboard.html for dashboard routes
 app.get('/dashboard', (req, res) => {
@@ -49,6 +53,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`====================================================`);
   console.log(`🚀 SSCM Server berjalan pada http://localhost:${PORT}`);
-  console.log(`🏢 Mode: Bengkel (Workshop) & Salon Terpadu`);
+  console.log(`🏢 Mode: Bengkel & Salon Terpadu + Garansi & Riwayat`);
   console.log(`====================================================`);
 });

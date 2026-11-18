@@ -6,6 +6,7 @@ const Sidebar = {
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'services', label: 'Layanan & Antrean', icon: '⚡', badge: 'SSCM' },
     { id: 'pos', label: 'Kasir POS', icon: '💳' },
+    { id: 'warranty', label: 'Aset & Garansi', icon: '🛡️' },
     { id: 'commissions', label: 'Rekap Komisi', icon: '💰', role: ['admin'] },
     { id: 'items', label: 'Katalog & Stok', icon: '📦' }
   ],
