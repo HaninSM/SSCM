@@ -59,35 +59,29 @@
           </div>
 
           <div class="header-right">
-            <!-- Outlet Indicator Badge -->
-            <div class="store-badge">
-              <span class="status-indicator"></span>
-              <span class="store-name">Outlet Pusat (Bengkel & Salon)</span>
-            </div>
-
-            <!-- User Profile Chip -->
-            <div class="user-chip">
-              <div class="avatar" id="userAvatar">AD</div>
-              <div class="user-info">
+            <div class="user-profile-widget" title="Profil Pengguna">
+              <div class="avatar-circle">
+                <span id="userAvatarText" style="font-size:16px;">👤</span>
+              </div>
+              <div class="user-profile-meta">
                 <span class="user-name" id="userName">Admin</span>
-                <span class="user-role" id="userRole">Administrator</span>
+                <span class="user-role" id="userRole">ADMINISTRATOR</span>
               </div>
             </div>
           </div>
         </header>
 
-        <!-- Dynamic Container for Active Component -->
-        <div class="content-body" id="mainContent">
-          <div class="loading-state">
-            <div class="spinner"></div>
-            <p>Memuat sistem SSCM...</p>
+        <!-- Dynamic Content Area (matching style.css .content-area) -->
+        <div class="content-area" id="contentArea">
+          <div style="text-align:center; padding:40px; color:var(--text-muted);">
+            Memuat dashboard SSCM...
           </div>
         </div>
       </main>
     </div>
   </div>
 
-  <!-- Dynamic Modal Overlay Container -->
+  <!-- Dynamic Modal Overlay Container (matching style.css .modal-overlay) -->
   <div class="modal-overlay" id="modalContainer" style="display: none;"></div>
 
   <!-- Toast Notification Container -->

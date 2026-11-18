@@ -9,20 +9,17 @@ const Services = {
   itemsCatalog: [],
 
   async render() {
-    const container = document.getElementById('mainContent');
-    container.innerHTML = `
-      <div class="loading-state">
-        <div class="spinner"></div>
-        <p>Memuat papan antrean layanan & jadwal...</p>
-      </div>
-    `;
+    const content = document.getElementById('contentArea');
+    if (!content) return;
+
+    content.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);">Memuat papan antrean layanan & jadwal...</div>';
 
     try {
       await this.loadData();
       this.renderBoard();
     } catch (err) {
-      container.innerHTML = `
-        <div class="alert alert-danger" style="padding: 1.5rem; background: #fee2e2; color: #991b1b; border-radius: 12px;">
+      content.innerHTML = `
+        <div class="error-message" style="display:block; padding:16px;">
           <b>Gagal memuat papan layanan:</b> ${err.message}
         </div>
       `;
@@ -44,7 +41,8 @@ const Services = {
   },
 
   renderBoard() {
-    const container = document.getElementById('mainContent');
+    const content = document.getElementById('contentArea');
+    if (!content) return;
     
     // Categorize orders into the 4 kanban stages
     const bookedOrders = this.orders.filter(o => o.status === 'BOOKED');
@@ -52,18 +50,18 @@ const Services = {
     const inProgressOrders = this.orders.filter(o => o.status === 'IN_PROGRESS');
     const readyOrders = this.orders.filter(o => o.status === 'READY_TO_PAY');
 
-    container.innerHTML = `
+    content.innerHTML = `
       <div class="queue-board-container">
         <!-- Top Toolbar & Filters -->
         <div class="queue-board-filters">
-          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-            <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-right: 0.25rem;">Filter Unit:</span>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-right: 4px;">Lini Bisnis:</span>
             <button class="btn btn-sm ${this.activeBusinessType === 'ALL' ? 'btn-primary' : 'btn-secondary'}" onclick="Services.setFilter('ALL')">Semua Unit</button>
             <button class="btn btn-sm ${this.activeBusinessType === 'WORKSHOP' ? 'btn-primary' : 'btn-secondary'}" onclick="Services.setFilter('WORKSHOP')">🔧 Bengkel & Carwash</button>
             <button class="btn btn-sm ${this.activeBusinessType === 'SALON' ? 'btn-primary' : 'btn-secondary'}" onclick="Services.setFilter('SALON')">✂️ Salon & Treatment</button>
           </div>
 
-          <div style="display: flex; gap: 0.5rem;">
+          <div style="display: flex; gap: 8px;">
             <button class="btn btn-secondary btn-sm" onclick="Services.render()">🔄 Refresh</button>
             <button class="btn btn-primary btn-sm" onclick="Services.openBookingModal()">➕ Buat Reservasi / SPK</button>
           </div>
@@ -77,8 +75,8 @@ const Services = {
               <span class="column-title">📅 Reservasi (Booked)</span>
               <span class="column-count">${bookedOrders.length}</span>
             </div>
-            <div class="column-cards" style="display: flex; flex-direction: column; gap: 0.75rem;">
-              ${bookedOrders.length === 0 ? `<div style="text-align: center; padding: 2rem 0; font-size: 0.8rem; color: var(--text-light);">Tidak ada reservasi mendatang</div>` : ''}
+            <div class="column-cards" style="display: flex; flex-direction: column; gap: 12px;">
+              ${bookedOrders.length === 0 ? `<div style="text-align: center; padding: 24px 0; font-size: 12px; color: var(--text-light);">Tidak ada reservasi mendatang</div>` : ''}
               ${bookedOrders.map(o => this.renderCardHtml(o)).join('')}
             </div>
           </div>
@@ -89,8 +87,8 @@ const Services = {
               <span class="column-title">⏳ Menunggu (Queued)</span>
               <span class="column-count">${queuedOrders.length}</span>
             </div>
-            <div class="column-cards" style="display: flex; flex-direction: column; gap: 0.75rem;">
-              ${queuedOrders.length === 0 ? `<div style="text-align: center; padding: 2rem 0; font-size: 0.8rem; color: var(--text-light);">Tidak ada yang mengantre</div>` : ''}
+            <div class="column-cards" style="display: flex; flex-direction: column; gap: 12px;">
+              ${queuedOrders.length === 0 ? `<div style="text-align: center; padding: 24px 0; font-size: 12px; color: var(--text-light);">Tidak ada yang mengantre</div>` : ''}
               ${queuedOrders.map(o => this.renderCardHtml(o)).join('')}
             </div>
           </div>
@@ -101,8 +99,8 @@ const Services = {
               <span class="column-title">⚙️ Dikerjakan (In Progress)</span>
               <span class="column-count">${inProgressOrders.length}</span>
             </div>
-            <div class="column-cards" style="display: flex; flex-direction: column; gap: 0.75rem;">
-              ${inProgressOrders.length === 0 ? `<div style="text-align: center; padding: 2rem 0; font-size: 0.8rem; color: var(--text-light);">Tidak ada unit sedang dikerjakan</div>` : ''}
+            <div class="column-cards" style="display: flex; flex-direction: column; gap: 12px;">
+              ${inProgressOrders.length === 0 ? `<div style="text-align: center; padding: 24px 0; font-size: 12px; color: var(--text-light);">Tidak ada unit sedang dikerjakan</div>` : ''}
               ${inProgressOrders.map(o => this.renderCardHtml(o)).join('')}
             </div>
           </div>
@@ -113,8 +111,8 @@ const Services = {
               <span class="column-title">✅ Siap Bayar (Ready)</span>
               <span class="column-count">${readyOrders.length}</span>
             </div>
-            <div class="column-cards" style="display: flex; flex-direction: column; gap: 0.75rem;">
-              ${readyOrders.length === 0 ? `<div style="text-align: center; padding: 2rem 0; font-size: 0.8rem; color: var(--text-light);">Tidak ada order siap bayar</div>` : ''}
+            <div class="column-cards" style="display: flex; flex-direction: column; gap: 12px;">
+              ${readyOrders.length === 0 ? `<div style="text-align: center; padding: 24px 0; font-size: 12px; color: var(--text-light);">Tidak ada order siap bayar</div>` : ''}
               ${readyOrders.map(o => this.renderCardHtml(o)).join('')}
             </div>
           </div>
@@ -130,20 +128,20 @@ const Services = {
     let actionBtnHtml = '';
     if (order.status === 'BOOKED') {
       actionBtnHtml = `
-        <button class="btn btn-xs btn-primary" onclick="Services.updateOrderStatus(${order.id}, 'QUEUED')">Pelanggan Tiba ➔</button>
+        <button class="btn btn-sm btn-primary" onclick="Services.updateOrderStatus(${order.id}, 'QUEUED')">Pelanggan Tiba ➔</button>
       `;
     } else if (order.status === 'QUEUED') {
       actionBtnHtml = `
-        <button class="btn btn-xs btn-primary" onclick="Services.updateOrderStatus(${order.id}, 'IN_PROGRESS')">Mulai Servis ⚙️</button>
+        <button class="btn btn-sm btn-primary" onclick="Services.updateOrderStatus(${order.id}, 'IN_PROGRESS')">Mulai Servis ⚙️</button>
       `;
     } else if (order.status === 'IN_PROGRESS') {
       actionBtnHtml = `
-        <button class="btn btn-xs btn-secondary" onclick="Services.openAddPartModal(${order.id})" title="Tambah oli/sparepart/bahan">+ Bahan/Part</button>
-        <button class="btn btn-xs btn-primary" style="background: var(--success);" onclick="Services.updateOrderStatus(${order.id}, 'READY_TO_PAY')">Selesai ✅</button>
+        <button class="btn btn-sm btn-secondary" onclick="Services.openAddPartModal(${order.id})" title="Tambah oli/sparepart/bahan">+ Bahan</button>
+        <button class="btn btn-sm btn-success" onclick="Services.updateOrderStatus(${order.id}, 'READY_TO_PAY')">Selesai ✅</button>
       `;
     } else if (order.status === 'READY_TO_PAY') {
       actionBtnHtml = `
-        <button class="btn btn-xs btn-primary" style="background: var(--primary);" onclick="POS.loadServiceOrderToCart(${order.id})">Bayar di Kasir 💳</button>
+        <button class="btn btn-sm btn-primary" onclick="POS.loadServiceOrderToCart(${order.id})">Bayar di Kasir 💳</button>
       `;
     }
 
@@ -183,14 +181,14 @@ const Services = {
         </div>
 
         <div class="card-items-preview">
-          <div style="font-weight: 600; color: var(--text-main); margin-bottom: 0.15rem;">Item Servis & Bahan:</div>
-          <div style="font-size: 0.72rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${itemsText}</div>
+          <div style="font-weight: 600; color: var(--text-main); margin-bottom: 2px;">Item Servis & Bahan:</div>
+          <div style="font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${itemsText}</div>
         </div>
 
         <div class="card-footer">
           <div class="card-total">${Format.rupiah(order.grand_total)}</div>
           <div class="card-actions">
-            <button class="btn btn-xs btn-ghost" onclick="Services.openDetailModal(${order.id})">🔍</button>
+            <button class="btn btn-sm btn-secondary" onclick="Services.openDetailModal(${order.id})">🔍</button>
             ${actionBtnHtml}
           </div>
         </div>
@@ -220,93 +218,87 @@ const Services = {
   openBookingModal() {
     const modal = document.getElementById('modalContainer');
     const now = new Date();
-    // Default 1 hour from now
     const startTimeStr = new Date(now.getTime() + 15 * 60000).toISOString().slice(0, 16);
     const endTimeStr = new Date(now.getTime() + 75 * 60000).toISOString().slice(0, 16);
 
     modal.innerHTML = `
-      <div class="modal-card" style="max-width: 650px;">
+      <div class="modal modal-lg">
         <div class="modal-header">
-          <h3 style="font-size: 1.15rem; font-weight: 800;">➕ Buat SPK / Reservasi Servis Baru</h3>
+          <h3>➕ Buat SPK / Reservasi Servis Baru</h3>
           <button class="modal-close" onclick="App.closeModal()">✕</button>
         </div>
 
-        <!-- Real-time Collision Warning Banner -->
-        <div id="collisionAlert" class="collision-warning-box" style="display: none;">
-          <span>⚠️</span>
-          <span id="collisionMsg">Peringatan bentrok jadwal!</span>
+        <div class="modal-body">
+          <!-- Real-time Collision Warning Banner -->
+          <div id="collisionAlert" class="error-message" style="display: none; margin-bottom: 16px;">
+            <span id="collisionMsg">Peringatan bentrok jadwal!</span>
+          </div>
+
+          <form id="bookingForm" onsubmit="Services.submitBooking(event)">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Lini Bisnis</label>
+                <select id="b_type" onchange="Services.handleBusinessTypeChange(this.value)">
+                  <option value="WORKSHOP">🔧 Bengkel & Carwash</option>
+                  <option value="SALON">✂️ Salon & Treatment</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label id="assetLabel">No. Plat & Tipe Kendaraan</label>
+                <input type="text" id="b_asset" placeholder="Contoh: B 1234 ABC (Vario 160)" required />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Nama Pelanggan</label>
+                <input type="text" id="b_customer_name" placeholder="Nama lengkap" required />
+              </div>
+              <div class="form-group">
+                <label>No. HP / WhatsApp</label>
+                <input type="text" id="b_customer_phone" placeholder="08xxxxxxxxxx" />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Waktu Mulai</label>
+                <input type="datetime-local" id="b_start" value="${startTimeStr}" onchange="Services.triggerCollisionCheck()" required />
+              </div>
+              <div class="form-group">
+                <label>Waktu Selesai (Estimasi)</label>
+                <input type="datetime-local" id="b_end" value="${endTimeStr}" onchange="Services.triggerCollisionCheck()" required />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label id="resourceLabel">Fasilitas Fisik (Pit / Bay)</label>
+                <select id="b_resource" onchange="Services.triggerCollisionCheck()" required></select>
+              </div>
+              <div class="form-group">
+                <label id="staffLabel">Tenaga Ahli (Mekanik)</label>
+                <select id="b_staff" onchange="Services.triggerCollisionCheck()" required></select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Pilih Layanan Jasa Utama</label>
+              <select id="b_service_item" required></select>
+            </div>
+
+            <div class="form-group">
+              <label>Catatan Keluhan / Instruksi Tambahan</label>
+              <textarea id="b_notes" rows="2" placeholder="Keluhan konsumen / diagnosa..."></textarea>
+            </div>
+
+            <div class="modal-footer" style="padding: 16px 0 0 0;">
+              <button type="button" class="btn btn-secondary" onclick="App.closeModal()">Batal</button>
+              <button type="submit" class="btn btn-primary" id="btnSubmitBooking">💾 Simpan & Terbitkan SPK</button>
+            </div>
+          </form>
         </div>
-
-        <form id="bookingForm" onsubmit="Services.submitBooking(event)">
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label>Lini Bisnis</label>
-              <select id="b_type" class="form-control" onchange="Services.handleBusinessTypeChange(this.value)">
-                <option value="WORKSHOP">🔧 Bengkel & Carwash</option>
-                <option value="SALON">✂️ Salon & Treatment</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label id="assetLabel">No. Plat & Tipe Kendaraan</label>
-              <input type="text" id="b_asset" class="form-control" placeholder="Contoh: B 1234 ABC (Vario 160)" required />
-            </div>
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label>Nama Pelanggan</label>
-              <input type="text" id="b_customer_name" class="form-control" placeholder="Nama lengkap" required />
-            </div>
-            <div class="form-group">
-              <label>No. HP / WhatsApp</label>
-              <input type="text" id="b_customer_phone" class="form-control" placeholder="08xxxxxxxxxx" />
-            </div>
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label>Waktu Mulai</label>
-              <input type="datetime-local" id="b_start" class="form-control" value="${startTimeStr}" onchange="Services.triggerCollisionCheck()" required />
-            </div>
-            <div class="form-group">
-              <label>Waktu Selesai (Estimasi)</label>
-              <input type="datetime-local" id="b_end" class="form-control" value="${endTimeStr}" onchange="Services.triggerCollisionCheck()" required />
-            </div>
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label id="resourceLabel">Fasilitas Fisik (Pit / Bay)</label>
-              <select id="b_resource" class="form-control" onchange="Services.triggerCollisionCheck()" required>
-                <!-- Populated dynamically -->
-              </select>
-            </div>
-            <div class="form-group">
-              <label id="staffLabel">Tenaga Ahli (Mekanik)</label>
-              <select id="b_staff" class="form-control" onchange="Services.triggerCollisionCheck()" required>
-                <!-- Populated dynamically -->
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Pilih Layanan Jasa Utama</label>
-            <select id="b_service_item" class="form-control" required>
-              <!-- Populated dynamically -->
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Catatan Keluhan / Instruksi Tambahan</label>
-            <textarea id="b_notes" class="form-control" rows="2" placeholder="Keluhan konsumen / diagnosa..."></textarea>
-          </div>
-
-          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
-            <button type="button" class="btn btn-secondary" onclick="App.closeModal()">Batal</button>
-            <button type="submit" class="btn btn-primary" id="btnSubmitBooking">💾 Simpan & Terbitkan SPK</button>
-          </div>
-        </form>
       </div>
     `;
 
@@ -376,14 +368,12 @@ const Services = {
       });
 
       if (res.hasCollision) {
-        alertBox.style.display = 'flex';
-        alertMsg.textContent = res.reason;
+        alertBox.style.display = 'block';
+        alertMsg.textContent = '⚠️ ' + res.reason;
         btnSubmit.disabled = true;
-        btnSubmit.classList.add('btn-disabled');
       } else {
         alertBox.style.display = 'none';
         btnSubmit.disabled = false;
-        btnSubmit.classList.remove('btn-disabled');
       }
     } catch (err) {
       console.warn('Collision check error:', err);
@@ -430,12 +420,11 @@ const Services = {
     }
   },
 
-  // Modal 2: Tambah Part/Bahan Konsumsi (FIFO Stock check)
+  // Modal 2: Tambah Part/Bahan Konsumsi
   openAddPartModal(orderId) {
     const order = this.orders.find(o => o.id === orderId);
     if (!order) return;
 
-    // Filter consumable items matching business type
     const consumables = this.itemsCatalog.filter(i => 
       (i.business_type === order.business_type || i.business_type === 'ALL') && 
       i.type === 'CONSUMABLE'
@@ -443,37 +432,39 @@ const Services = {
 
     const modal = document.getElementById('modalContainer');
     modal.innerHTML = `
-      <div class="modal-card" style="max-width: 500px;">
+      <div class="modal">
         <div class="modal-header">
-          <h3 style="font-size: 1.1rem; font-weight: 800;">📦 Pakai Sparepart / Bahan Habis Pakai</h3>
+          <h3>📦 Pakai Sparepart / Bahan Habis Pakai</h3>
           <button class="modal-close" onclick="App.closeModal()">✕</button>
         </div>
 
-        <div style="background: #f8fafc; padding: 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.8rem;">
-          <div><b>Order:</b> ${order.order_number} (${order.customer_name})</div>
-          <div><b>Unit:</b> ${order.asset_identifier}</div>
+        <div class="modal-body">
+          <div style="background: #f8fafc; padding: 12px; border-radius: var(--radius-md); margin-bottom: 16px; font-size: 13px;">
+            <div><b>Order:</b> ${order.order_number} (${order.customer_name})</div>
+            <div><b>Unit:</b> ${order.asset_identifier}</div>
+          </div>
+
+          <form id="addPartForm" onsubmit="Services.submitAddPart(event, ${order.id})">
+            <div class="form-group">
+              <label>Pilih Sparepart / Bahan</label>
+              <select id="part_item_id" required>
+                ${consumables.map(c => `
+                  <option value="${c.id}">${c.name} - ${Format.rupiah(c.price)} (Sisa Stok: ${c.stock} ${c.unit})</option>
+                `).join('')}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Jumlah Pemakaian (Qty)</label>
+              <input type="number" id="part_qty" value="1" min="1" step="0.5" required />
+            </div>
+
+            <div class="modal-footer" style="padding: 16px 0 0 0;">
+              <button type="button" class="btn btn-secondary" onclick="App.closeModal()">Batal</button>
+              <button type="submit" class="btn btn-primary">➕ Masukkan ke SPK</button>
+            </div>
+          </form>
         </div>
-
-        <form id="addPartForm" onsubmit="Services.submitAddPart(event, ${order.id})">
-          <div class="form-group">
-            <label>Pilih Sparepart / Bahan</label>
-            <select id="part_item_id" class="form-control" required>
-              ${consumables.map(c => `
-                <option value="${c.id}">${c.name} - ${Format.rupiah(c.price)} (Sisa Stok: ${c.stock} ${c.unit})</option>
-              `).join('')}
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Jumlah Pemakaian (Qty)</label>
-            <input type="number" id="part_qty" class="form-control" value="1" min="1" step="0.5" required />
-          </div>
-
-          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
-            <button type="button" class="btn btn-secondary" onclick="App.closeModal()">Batal</button>
-            <button type="submit" class="btn btn-primary">➕ Masukkan ke SPK</button>
-          </div>
-        </form>
       </div>
     `;
 
@@ -510,76 +501,80 @@ const Services = {
       const modal = document.getElementById('modalContainer');
 
       modal.innerHTML = `
-        <div class="modal-card" style="max-width: 650px;">
+        <div class="modal modal-lg">
           <div class="modal-header">
             <div>
-              <h3 style="font-size: 1.15rem; font-weight: 800;">Rincian SPK: ${order.order_number}</h3>
-              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">${Format.dateTime(order.scheduled_start)} • ${Format.businessBadge(order.business_type)}</div>
+              <h3>Rincian SPK: ${order.order_number}</h3>
+              <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">${Format.dateTime(order.scheduled_start)} • ${Format.businessBadge(order.business_type)}</div>
             </div>
             <button class="modal-close" onclick="App.closeModal()">✕</button>
           </div>
 
-          <div class="form-grid-2" style="margin-bottom: 1rem; font-size: 0.85rem; background: #f8fafc; padding: 1rem; border-radius: var(--radius-sm);">
-            <div>
-              <div style="color: var(--text-muted); font-size: 0.75rem;">Pelanggan & Kontak</div>
-              <div style="font-weight: 700;">${order.customer_name} (${order.customer_phone || '-'})</div>
-              <div style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.75rem;">Identitas Aset</div>
-              <div style="font-weight: 700;">${order.asset_identifier}</div>
+          <div class="modal-body">
+            <div class="form-grid-2" style="margin-bottom: 16px; font-size: 13.5px; background: #f8fafc; padding: 16px; border-radius: var(--radius-md);">
+              <div>
+                <div style="color: var(--text-muted); font-size: 12px;">Pelanggan & Kontak</div>
+                <div style="font-weight: 700;">${order.customer_name} (${order.customer_phone || '-'})</div>
+                <div style="margin-top: 8px; color: var(--text-muted); font-size: 12px;">Identitas Aset</div>
+                <div style="font-weight: 700;">${order.asset_identifier}</div>
+              </div>
+              <div>
+                <div style="color: var(--text-muted); font-size: 12px;">Fasilitas & Staf</div>
+                <div style="font-weight: 700;">${order.resource_name}</div>
+                <div style="font-weight: 600; color: var(--primary);">${order.staff_name}</div>
+                <div style="margin-top: 8px; color: var(--text-muted); font-size: 12px;">Status Saat Ini</div>
+                <div>${Format.statusBadge(order.status)}</div>
+              </div>
             </div>
-            <div>
-              <div style="color: var(--text-muted); font-size: 0.75rem;">Fasilitas & Staf</div>
-              <div style="font-weight: 700;">${order.resource_name}</div>
-              <div style="font-weight: 600; color: var(--primary);">${order.staff_name}</div>
-              <div style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.75rem;">Status Saat Ini</div>
-              <div>${Format.statusBadge(order.status)}</div>
-            </div>
-          </div>
 
-          ${order.notes ? `
-            <div style="font-size: 0.8rem; margin-bottom: 1rem; padding: 0.6rem; background: #fffbeb; border: 1px solid #fef3c7; border-radius: var(--radius-sm);">
-              <b>Catatan/Keluhan:</b> ${order.notes}
-            </div>
-          ` : ''}
-
-          <h4 style="font-size: 0.9rem; font-weight: 800; margin-bottom: 0.5rem;">Tindakan Jasa & Bahan Habis Pakai:</h4>
-          <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 1rem;">
-            <thead>
-              <tr style="border-bottom: 2px solid var(--border-subtle); text-align: left; color: var(--text-muted);">
-                <th style="padding: 0.4rem;">Item</th>
-                <th style="padding: 0.4rem;">Tipe</th>
-                <th style="padding: 0.4rem; text-align: center;">Qty</th>
-                <th style="padding: 0.4rem; text-align: right;">Tarif</th>
-                <th style="padding: 0.4rem; text-align: right;">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${order.items.map(i => `
-                <tr style="border-bottom: 1px solid var(--border-subtle);">
-                  <td style="padding: 0.5rem; font-weight: 600;">${i.item_name}</td>
-                  <td style="padding: 0.5rem;">
-                    <span style="font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; ${i.item_type === 'SERVICE' ? 'background: #eff6ff; color: #1d4ed8;' : 'background: #fef3c7; color: #b45309;'}">
-                      ${i.item_type === 'SERVICE' ? 'JASA' : 'BAHAN/PART'}
-                    </span>
-                  </td>
-                  <td style="padding: 0.5rem; text-align: center;">${i.qty}</td>
-                  <td style="padding: 0.5rem; text-align: right;">${Format.rupiah(i.unit_price)}</td>
-                  <td style="padding: 0.5rem; text-align: right; font-weight: 700;">${Format.rupiah(i.subtotal)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="4" style="text-align: right; padding: 0.75rem 0.5rem; font-weight: 800; font-size: 0.95rem;">Grand Total:</td>
-                <td style="text-align: right; padding: 0.75rem 0.5rem; font-weight: 800; font-size: 1rem; color: var(--primary);">${Format.rupiah(order.grand_total)}</td>
-              </tr>
-            </tfoot>
-          </table>
-
-          <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-            <button class="btn btn-secondary" onclick="App.closeModal()">Tutup</button>
-            ${order.status === 'READY_TO_PAY' ? `
-              <button class="btn btn-primary" onclick="App.closeModal(); POS.loadServiceOrderToCart(${order.id});">Buka di Kasir POS ➔</button>
+            ${order.notes ? `
+              <div style="font-size: 13px; margin-bottom: 16px; padding: 10px 14px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: var(--radius-md);">
+                <b>Catatan/Keluhan:</b> ${order.notes}
+              </div>
             ` : ''}
+
+            <h4 style="font-size: 14px; font-weight: 800; margin-bottom: 8px;">Tindakan Jasa & Bahan Habis Pakai:</h4>
+            <div class="table-container" style="margin-bottom: 16px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Tipe</th>
+                    <th style="text-align: center;">Qty</th>
+                    <th style="text-align: right;">Tarif</th>
+                    <th style="text-align: right;">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${order.items.map(i => `
+                    <tr>
+                      <td style="font-weight: 600;">${i.item_name}</td>
+                      <td>
+                        <span class="badge ${i.item_type === 'SERVICE' ? 'badge-info' : 'badge-warning'}">
+                          ${i.item_type === 'SERVICE' ? 'JASA' : 'BAHAN'}
+                        </span>
+                      </td>
+                      <td style="text-align: center;">${i.qty}</td>
+                      <td style="text-align: right;">${Format.rupiah(i.unit_price)}</td>
+                      <td style="text-align: right; font-weight: 700;">${Format.rupiah(i.subtotal)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="4" style="text-align: right; padding: 14px; font-weight: 800; font-size: 14px;">Grand Total:</td>
+                    <td style="text-align: right; padding: 14px; font-weight: 800; font-size: 16px; color: var(--primary);">${Format.rupiah(order.grand_total)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <div class="modal-footer" style="padding: 16px 0 0 0;">
+              <button class="btn btn-secondary" onclick="App.closeModal()">Tutup</button>
+              ${order.status === 'READY_TO_PAY' ? `
+                <button class="btn btn-primary" onclick="App.closeModal(); POS.loadServiceOrderToCart(${order.id});">Buka di Kasir POS ➔</button>
+              ` : ''}
+            </div>
           </div>
         </div>
       `;

@@ -14,19 +14,24 @@ const App = {
 
     const user = API.getUser();
     if (user) {
-      document.getElementById('userName').textContent = user.name || user.username;
-      document.getElementById('userRole').textContent = user.role.toUpperCase();
-      const initials = (user.name || user.username).substring(0, 2).toUpperCase();
-      document.getElementById('userAvatar').textContent = initials;
+      const nameElem = document.getElementById('userName');
+      const roleElem = document.getElementById('userRole');
+      const avatarElem = document.getElementById('userAvatarText');
+
+      if (nameElem) nameElem.textContent = user.name || user.username;
+      if (roleElem) roleElem.textContent = (user.role || 'CASHIER').toUpperCase();
+      if (avatarElem) avatarElem.textContent = (user.name || user.username).substring(0, 2).toUpperCase();
     }
 
     // Modal click outside to close
     const modalContainer = document.getElementById('modalContainer');
-    modalContainer.addEventListener('click', (e) => {
-      if (e.target === modalContainer) {
-        this.closeModal();
-      }
-    });
+    if (modalContainer) {
+      modalContainer.addEventListener('click', (e) => {
+        if (e.target === modalContainer) {
+          this.closeModal();
+        }
+      });
+    }
 
     // Keyboard ESC to close modal
     document.addEventListener('keydown', (e) => {
@@ -44,11 +49,11 @@ const App = {
     Sidebar.render();
 
     const titles = {
-      'dashboard': 'Dashboard Ringkasan Operasional',
-      'services': 'Papan Layanan & Antrean (SSCM)',
-      'pos': 'Kasir POS & Penagihan Split Payment',
-      'commissions': 'Rekapitulasi Komisi Teknisi & Terapis',
-      'items': 'Katalog Jasa & Inventori Suku Cadang'
+      'dashboard': 'Dashboard',
+      'services': 'Layanan & Antrean (SSCM)',
+      'pos': 'Kasir POS & Split Payment',
+      'commissions': 'Rekapitulasi Komisi Karyawan',
+      'items': 'Katalog Jasa & Stok Bahan'
     };
 
     const titleElem = document.getElementById('pageTitle');
@@ -79,8 +84,10 @@ const App = {
 
   closeModal() {
     const modalContainer = document.getElementById('modalContainer');
-    modalContainer.style.display = 'none';
-    modalContainer.innerHTML = '';
+    if (modalContainer) {
+      modalContainer.style.display = 'none';
+      modalContainer.innerHTML = '';
+    }
   },
 
   toast(message, type = 'info') {

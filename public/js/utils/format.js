@@ -1,5 +1,5 @@
 /**
- * UI Utilities & Formatters
+ * UI Utilities & Formatters (Matching TokoJendral Style)
  */
 const Format = {
   rupiah(number) {
@@ -34,25 +34,30 @@ const Format = {
   },
 
   statusBadge(status) {
-    const map = {
-      'BOOKED': { label: 'Terjadwal', cls: 'badge-booked', color: '#64748b', bg: '#f1f5f9' },
-      'QUEUED': { label: 'Menunggu', cls: 'badge-queued', color: '#0284c7', bg: '#e0f2fe' },
-      'IN_PROGRESS': { label: 'Dikerjakan', cls: 'badge-in-progress', color: '#b45309', bg: '#fef3c7' },
-      'READY_TO_PAY': { label: 'Siap Bayar', cls: 'badge-ready', color: '#059669', bg: '#d1fae5' },
-      'COMPLETED': { label: 'Lunas', cls: 'badge-completed', color: '#10b981', bg: '#ecfdf5' },
-      'CANCELLED': { label: 'Batal', cls: 'badge-cancelled', color: '#dc2626', bg: '#fee2e2' }
-    };
-
-    const s = map[status] || { label: status, cls: 'badge-default', color: '#64748b', bg: '#f1f5f9' };
-    return `<span class="badge ${s.cls}" style="background: ${s.bg}; color: ${s.color}; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.72rem;">${s.label}</span>`;
+    switch (status) {
+      case 'BOOKED':
+        return '<span class="badge" style="background:#f1f5f9; color:#64748b;">TERJADWAL</span>';
+      case 'QUEUED':
+        return '<span class="badge badge-info">MENUNGGU</span>';
+      case 'IN_PROGRESS':
+        return '<span class="badge badge-warning">DIKERJAKAN</span>';
+      case 'READY_TO_PAY':
+        return '<span class="badge badge-success">SIAP BAYAR</span>';
+      case 'COMPLETED':
+        return '<span class="badge badge-success">LUNAS</span>';
+      case 'CANCELLED':
+        return '<span class="badge badge-danger">BATAL</span>';
+      default:
+        return `<span class="badge">${status}</span>`;
+    }
   },
 
   businessBadge(type) {
     if (type === 'WORKSHOP') {
-      return `<span class="card-badge badge-workshop" style="background: #fef3c7; color: #b45309; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px;">🔧 BENGKEL</span>`;
+      return '<span class="badge" style="background:#fef3c7; color:#b45309;">🔧 BENGKEL</span>';
     } else if (type === 'SALON') {
-      return `<span class="card-badge badge-salon" style="background: #fce7f3; color: #be185d; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px;">✂️ SALON</span>`;
+      return '<span class="badge" style="background:#fce7f3; color:#be185d;">✂️ SALON</span>';
     }
-    return `<span class="card-badge" style="background: #e2e8f0; color: #475569; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px;">🌐 UMUM</span>`;
+    return '<span class="badge" style="background:#e2e8f0; color:#475569;">🌐 UMUM</span>';
   }
 };

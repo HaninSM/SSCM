@@ -8,21 +8,18 @@ const POS = {
   catalogItems: [],
 
   async render() {
-    const container = document.getElementById('mainContent');
-    container.innerHTML = `
-      <div class="loading-state">
-        <div class="spinner"></div>
-        <p>Menyiapkan mesin kasir POS...</p>
-      </div>
-    `;
+    const content = document.getElementById('contentArea');
+    if (!content) return;
+
+    content.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);">Menyiapkan mesin kasir POS...</div>';
 
     try {
       const res = await API.get('/items');
       this.catalogItems = res.items || [];
       this.renderPOSLayout();
     } catch (err) {
-      container.innerHTML = `
-        <div class="alert alert-danger" style="padding: 1.5rem; background: #fee2e2; color: #991b1b; border-radius: 12px;">
+      content.innerHTML = `
+        <div class="error-message" style="display:block; padding:16px;">
           <b>Gagal membuka kasir:</b> ${err.message}
         </div>
       `;
@@ -30,17 +27,19 @@ const POS = {
   },
 
   renderPOSLayout() {
-    const container = document.getElementById('mainContent');
+    const content = document.getElementById('contentArea');
+    if (!content) return;
+
     const subtotal = this.calculateSubtotal();
     const grandTotal = subtotal;
 
-    container.innerHTML = `
-      <div class="pos-layout" style="display: grid; grid-template-columns: 1fr 380px; gap: 1.25rem; height: calc(100vh - 120px);">
+    content.innerHTML = `
+      <div class="pos-layout" style="display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: stretch;">
         <!-- Left: Catalog & Quick Actions -->
-        <div class="pos-catalog-panel" style="display: flex; flex-direction: column; gap: 1rem; overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
           <!-- Top Bar: Load Service Button & Category Filters -->
-          <div style="background: #ffffff; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <div style="background: var(--bg-card); padding: 16px 20px; border-radius: var(--radius-lg); border: 1px solid var(--border-light); box-shadow: var(--shadow-card); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <button class="btn btn-sm btn-primary" onclick="POS.openLoadServiceOrderModal()">
                 ⚡ Panggil Antrean Servis (Load SPK)
               </button>
@@ -49,68 +48,68 @@ const POS = {
               <button class="btn btn-sm btn-secondary" onclick="POS.filterCatalog('CONSUMABLE')">Sparepart / Bahan</button>
             </div>
             
-            <input type="text" id="posSearch" placeholder="Cari jasa / produk..." style="padding: 0.4rem 0.75rem; border: 1px solid var(--border-subtle); border-radius: var(--radius-pill); font-size: 0.82rem;" onkeyup="POS.handleSearch(this.value)" />
+            <input type="text" id="posSearch" placeholder="Cari jasa / produk..." style="width: 200px; padding: 8px 14px; border-radius: var(--radius-pill); font-size: 13px;" onkeyup="POS.handleSearch(this.value)" />
           </div>
 
           <!-- Items Grid -->
-          <div class="pos-items-grid" id="posItemsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.85rem;">
+          <div class="pos-items-grid" id="posItemsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px;">
             ${this.renderItemsList(this.catalogItems)}
           </div>
         </div>
 
         <!-- Right: Active Cart Panel -->
-        <div class="pos-cart-panel" style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); display: flex; flex-direction: column; box-shadow: var(--shadow-card);">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg); display: flex; flex-direction: column; box-shadow: var(--shadow-card); height: 100%;">
           <!-- Cart Header -->
-          <div style="padding: 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+          <div style="padding: 18px 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <h3 style="font-size: 1.05rem; font-weight: 800;">🛒 Keranjang Tagihan</h3>
+              <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin: 0;">🛒 Keranjang Tagihan</h3>
               ${this.linkedServiceOrderId ? `
-                <span class="badge" style="background: var(--primary-light); color: var(--primary); font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px;">
-                  Terhubung SPK: #${this.linkedServiceOrderId} (${this.linkedCustomerName})
-                </span>
+                <div style="margin-top: 4px;">
+                  <span class="badge badge-info">SPK #${this.linkedServiceOrderId} • ${this.linkedCustomerName}</span>
+                </div>
               ` : `
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Pelanggan Walk-In Biasa</span>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Pelanggan Walk-In Biasa</div>
               `}
             </div>
-            <button class="btn btn-xs btn-ghost" onclick="POS.clearCart()" title="Kosongkan Keranjang">🗑️</button>
+            <button class="btn btn-sm btn-secondary" onclick="POS.clearCart()" title="Kosongkan Keranjang">🗑️</button>
           </div>
 
           <!-- Cart Items List -->
-          <div class="cart-items-container" style="flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+          <div class="cart-items-container" style="flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; min-height: 280px; max-height: 400px;">
             ${this.cart.length === 0 ? `
-              <div style="text-align: center; color: var(--text-light); margin-top: 4rem;">
-                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🛍️</div>
-                <p style="font-size: 0.85rem;">Keranjang belanja masih kosong.</p>
-                <p style="font-size: 0.75rem; margin-top: 0.25rem;">Klik item katalog atau panggil SPK antrean.</p>
+              <div style="text-align: center; color: var(--text-light); margin-top: 60px;">
+                <div style="font-size: 36px; margin-bottom: 8px;">🛍️</div>
+                <p style="font-size: 14px; margin: 0;">Keranjang belanja masih kosong.</p>
+                <p style="font-size: 12px; margin-top: 4px;">Klik katalog atau panggil SPK antrean.</p>
               </div>
             ` : this.cart.map((item, idx) => `
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem; background: #f8fafc; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-                <div style="flex: 1; padding-right: 0.5rem;">
-                  <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">${item.name}</div>
-                  <div style="font-size: 0.72rem; color: var(--text-muted);">${Format.rupiah(item.price)} x ${item.qty}</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f8fafc; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+                <div style="flex: 1; padding-right: 10px;">
+                  <div style="font-size: 13.5px; font-weight: 700; color: var(--text-main);">${item.name}</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">${Format.rupiah(item.price)} x ${item.qty}</div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.4rem;">
-                  <button class="btn btn-xs btn-secondary" onclick="POS.updateQty(${idx}, -1)">-</button>
-                  <span style="font-size: 0.85rem; font-weight: 700; min-width: 20px; text-align: center;">${item.qty}</span>
-                  <button class="btn btn-xs btn-secondary" onclick="POS.updateQty(${idx}, 1)">+</button>
-                  <button class="btn btn-xs btn-ghost" style="color: var(--danger);" onclick="POS.removeItem(${idx})">✕</button>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <button class="btn btn-sm btn-secondary" style="padding: 2px 8px;" onclick="POS.updateQty(${idx}, -1)">-</button>
+                  <span style="font-size: 13.5px; font-weight: 700; min-width: 20px; text-align: center;">${item.qty}</span>
+                  <button class="btn btn-sm btn-secondary" style="padding: 2px 8px;" onclick="POS.updateQty(${idx}, 1)">+</button>
+                  <button class="btn btn-sm btn-danger" style="padding: 2px 8px; margin-left: 4px;" onclick="POS.removeItem(${idx})">✕</button>
                 </div>
               </div>
             `).join('')}
           </div>
 
           <!-- Cart Totals & Checkout -->
-          <div style="padding: 1.25rem; border-top: 1px solid var(--border-subtle); background: #fdfefe;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-muted);">
+          <div style="padding: 20px; border-top: 1px solid var(--border-light); background: #fafcff; border-radius: 0 0 var(--radius-lg) var(--radius-lg);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13.5px; color: var(--text-muted);">
               <span>Subtotal:</span>
-              <span style="font-weight: 600;">${Format.rupiah(subtotal)}</span>
+              <span style="font-weight: 700;">${Format.rupiah(subtotal)}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.85rem; font-size: 1.15rem; font-weight: 800; color: var(--text-main);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 18px; font-weight: 800; color: var(--text-main);">
               <span>Grand Total:</span>
               <span style="color: var(--primary);">${Format.rupiah(grandTotal)}</span>
             </div>
 
-            <button class="btn btn-primary btn-block" style="padding: 0.85rem; font-size: 0.95rem; font-weight: 800;" onclick="POS.openCheckoutModal()" ${this.cart.length === 0 ? 'disabled' : ''}>
+            <button class="btn btn-primary btn-full" style="padding: 12px; font-size: 14px; font-weight: 800;" onclick="POS.openCheckoutModal()" ${this.cart.length === 0 ? 'disabled' : ''}>
               💳 Lanjut ke Pembayaran
             </button>
           </div>
@@ -121,22 +120,24 @@ const POS = {
 
   renderItemsList(items) {
     if (items.length === 0) {
-      return `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">Tidak ada item ditemukan</div>`;
+      return `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Tidak ada item ditemukan</div>`;
     }
 
     return items.map(i => `
-      <div class="pos-item-card" onclick="POS.addToCart(${i.id})" style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.85rem; cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; justify-content: space-between; height: 120px;">
+      <div class="pos-item-card" onclick="POS.addToCart(${i.id})" style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 14px; cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; justify-content: space-between; height: 130px; box-shadow: var(--shadow-card);">
         <div>
-          <div style="font-size: 0.7rem; font-weight: 700; color: ${i.type === 'SERVICE' ? 'var(--primary)' : '#b45309'}; margin-bottom: 0.2rem;">
-            ${i.type === 'SERVICE' ? '⚡ JASA' : '📦 PART/BAHAN'}
+          <div style="margin-bottom: 4px;">
+            <span class="badge ${i.type === 'SERVICE' ? 'badge-info' : 'badge-warning'}">
+              ${i.type === 'SERVICE' ? '⚡ JASA' : '📦 PART/BAHAN'}
+            </span>
           </div>
-          <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main); line-height: 1.2; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+          <div style="font-size: 13.5px; font-weight: 700; color: var(--text-main); line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
             ${i.name}
           </div>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 0.5rem;">
-          <div style="font-size: 0.85rem; font-weight: 800; color: var(--text-main);">${Format.rupiah(i.price)}</div>
-          <button class="btn btn-xs btn-primary">+</button>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px;">
+          <div style="font-size: 14px; font-weight: 800; color: var(--text-main);">${Format.rupiah(i.price)}</div>
+          <button class="btn btn-sm btn-primary" style="padding: 4px 8px;">+</button>
         </div>
       </div>
     `).join('');
@@ -213,38 +214,40 @@ const POS = {
 
       const modal = document.getElementById('modalContainer');
       modal.innerHTML = `
-        <div class="modal-card" style="max-width: 600px;">
+        <div class="modal modal-lg">
           <div class="modal-header">
-            <h3 style="font-size: 1.15rem; font-weight: 800;">⚡ Panggil Antrean Servis Siap Bayar</h3>
+            <h3>⚡ Panggil Antrean Servis Siap Bayar</h3>
             <button class="modal-close" onclick="App.closeModal()">✕</button>
           </div>
 
-          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
-            Pilih SPK yang telah selesai pengerjaan untuk langsung dimuat ke keranjang kasir beserta rincian jasa dan bahan habis pakai.
-          </p>
+          <div class="modal-body">
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+              Pilih SPK yang telah selesai pengerjaan untuk langsung dimuat ke keranjang kasir beserta rincian jasa dan bahan habis pakai.
+            </p>
 
-          <div style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
-            ${orders.length === 0 ? `
-              <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
-                Tidak ada order servis yang siap ditagihkan saat ini.
-              </div>
-            ` : orders.map(o => `
-              <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid var(--border-subtle); padding: 0.85rem; border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition);" onclick="POS.loadOrder(${o.id})">
-                <div>
-                  <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <span style="font-weight: 700; color: var(--primary); font-size: 0.85rem;">${o.order_number}</span>
-                    ${Format.businessBadge(o.business_type)}
-                    ${Format.statusBadge(o.status)}
+            <div style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+              ${orders.length === 0 ? `
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                  Tidak ada order servis yang siap ditagihkan saat ini.
+                </div>
+              ` : orders.map(o => `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid var(--border-light); padding: 14px 18px; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition);" onclick="POS.loadOrder(${o.id})">
+                  <div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                      <span style="font-weight: 700; color: var(--primary); font-size: 13.5px;">${o.order_number}</span>
+                      ${Format.businessBadge(o.business_type)}
+                      ${Format.statusBadge(o.status)}
+                    </div>
+                    <div style="font-weight: 700; font-size: 14px; margin-top: 4px;">${o.customer_name}</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">${o.asset_identifier} • ${o.resource_name}</div>
                   </div>
-                  <div style="font-weight: 700; font-size: 0.95rem; margin-top: 0.2rem;">${o.customer_name}</div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">${o.asset_identifier} • ${o.resource_name}</div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 16px; font-weight: 800; color: var(--text-main);">${Format.rupiah(o.grand_total)}</div>
+                    <button class="btn btn-sm btn-primary" style="margin-top: 4px;">Tarik ke Kasir ➔</button>
+                  </div>
                 </div>
-                <div style="text-align: right;">
-                  <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-main);">${Format.rupiah(o.grand_total)}</div>
-                  <button class="btn btn-xs btn-primary" style="margin-top: 0.25rem;">Tarik ke Kasir ➔</button>
-                </div>
-              </div>
-            `).join('')}
+              `).join('')}
+            </div>
           </div>
         </div>
       `;
@@ -296,51 +299,53 @@ const POS = {
     const modal = document.getElementById('modalContainer');
 
     modal.innerHTML = `
-      <div class="modal-card" style="max-width: 520px;">
+      <div class="modal">
         <div class="modal-header">
-          <h3 style="font-size: 1.15rem; font-weight: 800;">💳 Penyelesaian Pembayaran (Split Payment)</h3>
+          <h3>💳 Penyelesaian Pembayaran (Split Payment)</h3>
           <button class="modal-close" onclick="App.closeModal()">✕</button>
         </div>
 
-        <div style="background: var(--primary-light); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; text-align: center;">
-          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Total Yang Harus Dibayar</span>
-          <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">${Format.rupiah(grandTotal)}</div>
-          ${this.linkedServiceOrderId ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Menyelesaikan SPK #${this.linkedServiceOrderId}</div>` : ''}
+        <div class="modal-body">
+          <div style="background: var(--primary-light); padding: 18px; border-radius: var(--radius-md); margin-bottom: 20px; text-align: center;">
+            <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Total Tagihan</span>
+            <div style="font-size: 28px; font-weight: 800; color: var(--primary); margin-top: 4px;">${Format.rupiah(grandTotal)}</div>
+            ${this.linkedServiceOrderId ? `<div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Menyelesaikan SPK #${this.linkedServiceOrderId}</div>` : ''}
+          </div>
+
+          <!-- Payment Methods Inputs -->
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>💵 Tunai (CASH)</label>
+              <input type="number" id="pay_cash" placeholder="0" value="${grandTotal}" onkeyup="POS.recalculateChange(${grandTotal})" />
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>📱 Non-Tunai / QRIS</label>
+              <input type="number" id="pay_qris" placeholder="0" value="0" onkeyup="POS.recalculateChange(${grandTotal})" />
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>🏦 Transfer Bank</label>
+              <input type="number" id="pay_transfer" placeholder="0" value="0" onkeyup="POS.recalculateChange(${grandTotal})" />
+            </div>
+          </div>
+
+          <!-- Real-time Balance / Change Display -->
+          <div style="background: #f8fafc; padding: 14px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-light); margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 4px;">
+              <span>Total Diterima:</span>
+              <span id="labelTotalPaid" style="font-weight: 700;">${Format.rupiah(grandTotal)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 800;">
+              <span>Kembalian / Sisa:</span>
+              <span id="labelChange" style="color: var(--success);">Rp 0</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-full" id="btnSubmitPayment" style="padding: 12px; font-weight: 800; font-size: 14px;" onclick="POS.submitPayment(${grandTotal})">
+            ✅ Konfirmasi & Cetak Struk
+          </button>
         </div>
-
-        <!-- Payment Methods Inputs -->
-        <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1rem;">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="font-weight: 700; font-size: 0.82rem;">💵 Tunai (CASH)</label>
-            <input type="number" id="pay_cash" class="form-control" placeholder="0" value="${grandTotal}" onkeyup="POS.recalculateChange(${grandTotal})" />
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="font-weight: 700; font-size: 0.82rem;">📱 Non-Tunai / QRIS</label>
-            <input type="number" id="pay_qris" class="form-control" placeholder="0" value="0" onkeyup="POS.recalculateChange(${grandTotal})" />
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label style="font-weight: 700; font-size: 0.82rem;">🏦 Transfer Bank</label>
-            <input type="number" id="pay_transfer" class="form-control" placeholder="0" value="0" onkeyup="POS.recalculateChange(${grandTotal})" />
-          </div>
-        </div>
-
-        <!-- Real-time Balance / Change Display -->
-        <div style="background: #f8fafc; padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 1.25rem;">
-          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.25rem;">
-            <span>Total Masuk:</span>
-            <span id="labelTotalPaid" style="font-weight: 700;">${Format.rupiah(grandTotal)}</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 800;">
-            <span>Kembalian / Sisa:</span>
-            <span id="labelChange" style="color: var(--success-text);">Rp 0</span>
-          </div>
-        </div>
-
-        <button class="btn btn-primary btn-block" id="btnSubmitPayment" style="padding: 0.85rem; font-weight: 800;" onclick="POS.submitPayment(${grandTotal})">
-          ✅ Konfirmasi & Cetak Struk
-        </button>
       </div>
     `;
 
@@ -361,14 +366,12 @@ const POS = {
 
     if (change >= 0) {
       labelChange.textContent = Format.rupiah(change);
-      labelChange.style.color = 'var(--success-text)';
+      labelChange.style.color = 'var(--success)';
       btnSubmit.disabled = false;
-      btnSubmit.classList.remove('btn-disabled');
     } else {
       labelChange.textContent = `Kurang ${Format.rupiah(Math.abs(change))}`;
-      labelChange.style.color = 'var(--danger-text)';
+      labelChange.style.color = 'var(--danger)';
       btnSubmit.disabled = true;
-      btnSubmit.classList.add('btn-disabled');
     }
   },
 
@@ -399,8 +402,6 @@ const POS = {
         App.closeModal();
         this.clearCart();
         App.toast('Transaksi berhasil! Komisi staf telah otomatis dicatat.', 'success');
-
-        // Show receipt confirmation
         this.showReceiptModal(res.transaction, res.change_amount);
       }
     } catch (err) {
@@ -411,29 +412,29 @@ const POS = {
   showReceiptModal(transaction, changeAmount) {
     const modal = document.getElementById('modalContainer');
     modal.innerHTML = `
-      <div class="modal-card" style="max-width: 440px; text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎉</div>
-        <h3 style="font-size: 1.2rem; font-weight: 800;">Transaksi Berhasil!</h3>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+      <div class="modal" style="max-width: 440px; text-align: center;">
+        <div style="font-size: 42px; margin-bottom: 8px;">🎉</div>
+        <h3 style="font-size: 18px; font-weight: 800; margin: 0 0 4px 0;">Transaksi Selesai!</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
           Nomor Faktur: <b>${transaction.invoice_number}</b>
         </p>
 
-        <div style="background: #f8fafc; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: left; font-size: 0.85rem; margin-bottom: 1.5rem;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+        <div style="background: #f8fafc; padding: 16px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-light); text-align: left; font-size: 13.5px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
             <span>Total Tagihan:</span>
             <b>${Format.rupiah(transaction.grand_total)}</b>
           </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
             <span>Total Dibayar:</span>
             <b>${Format.rupiah(transaction.total_paid)}</b>
           </div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 800; color: var(--success-text); border-top: 1px dashed var(--border-subtle); padding-top: 0.5rem; margin-top: 0.5rem;">
+          <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; color: var(--success); border-top: 1px dashed var(--border-subtle); padding-top: 8px; margin-top: 8px;">
             <span>Kembalian:</span>
             <span>${Format.rupiah(changeAmount)}</span>
           </div>
         </div>
 
-        <button class="btn btn-primary btn-block" onclick="App.closeModal()">Selesai & Tutup</button>
+        <button class="btn btn-primary btn-full" onclick="App.closeModal()">Selesai & Tutup</button>
       </div>
     `;
 
