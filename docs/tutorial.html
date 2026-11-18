@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Buku Panduan & Tutorial Lengkap Sistem SSCM (Service Supply Chain Management)</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 18mm 20mm 18mm;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.6;
+    color: #0f172a;
+    background: #ffffff;
+  }
+
+  /* Cover Styling */
+  .cover {
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 88vh;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .cover .logo-badge {
+    width: 72px;
+    height: 72px;
+    background: #eff6ff;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(26, 98, 255, 0.15);
+  }
+  .cover h1 {
+    font-size: 28pt;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .cover h1 span { color: #1a62ff; }
+  .cover h2 {
+    font-size: 13pt;
+    color: #64748b;
+    font-weight: 500;
+    max-width: 600px;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+  .cover .tagline {
+    background: #1a62ff;
+    color: #ffffff;
+    font-size: 10pt;
+    font-weight: 700;
+    padding: 6px 18px;
+    border-radius: 9999px;
+    margin-bottom: 36px;
+    letter-spacing: 0.5px;
+  }
+  .cover .meta-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 24px;
+    text-align: left;
+    font-size: 9pt;
+    color: #475569;
+    line-height: 1.7;
+    width: 100%;
+    max-width: 460px;
+  }
+
+  /* Table of Contents */
+  .toc {
+    page-break-after: always;
+    padding-top: 10px;
+  }
+  .toc h2 {
+    font-size: 18pt;
+    color: #1a62ff;
+    border-bottom: 2.5px solid #1a62ff;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+  }
+  .toc ul { list-style: none; }
+  .toc li {
+    padding: 7px 0;
+    border-bottom: 1px dotted #cbd5e1;
+    font-size: 10pt;
+    display: flex;
+    justify-content: space-between;
+  }
+  .toc li span.title { font-weight: 600; color: #1e293b; }
+  .toc li span.num { color: #1a62ff; font-weight: 700; margin-right: 8px; }
+
+  /* Sections */
+  h2.section-title {
+    font-size: 16pt;
+    color: #0f172a;
+    border-bottom: 2px solid #1a62ff;
+    padding-bottom: 6px;
+    margin: 32px 0 16px 0;
+    page-break-after: avoid;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  h2.section-title span.sec-num {
+    background: #1a62ff;
+    color: #fff;
+    font-size: 10pt;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  h3 {
+    font-size: 12.5pt;
+    color: #1a62ff;
+    margin: 22px 0 10px 0;
+    page-break-after: avoid;
+  }
+  h4 {
+    font-size: 11pt;
+    color: #334155;
+    margin: 14px 0 6px 0;
+  }
+  p { margin-bottom: 10px; text-align: justify; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px 0;
+    font-size: 9pt;
+  }
+  th {
+    background: #f1f5f9;
+    color: #1e293b;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 700;
+    border: 1px solid #cbd5e1;
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  td {
+    padding: 8px 10px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .table-header-blue th { background: #1a62ff; color: #ffffff; border-color: #1a62ff; }
+
+  /* Info / Callout Boxes */
+  .callout {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 14px 0;
+    font-size: 9pt;
+    page-break-inside: avoid;
+  }
+  .callout-blue { background: #eff6ff; border-left: 4px solid #1a62ff; color: #1e40af; }
+  .callout-green { background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; }
+  .callout-yellow { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
+  .callout-red { background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 9.5pt; }
+
+  /* Flow Diagram Container */
+  .diagram-container {
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 18px;
+    margin: 16px 0 22px 0;
+    page-break-inside: avoid;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: nowrap;
+    margin: 10px 0;
+  }
+  .flow-node {
+    background: #ffffff;
+    border: 1.5px solid #1a62ff;
+    color: #0f172a;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 8.5pt;
+    text-align: center;
+    flex: 1;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  }
+  .flow-node.highlight {
+    background: #1a62ff;
+    color: #ffffff;
+  }
+  .flow-arrow {
+    font-size: 14pt;
+    color: #64748b;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-workshop { background: #fef3c7; color: #b45309; }
+  .badge-salon { background: #fce7f3; color: #be185d; }
+  .badge-btn {
+    background: #eff6ff;
+    color: #1a62ff;
+    border: 1px solid #bfdbfe;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 8.5pt;
+  }
+
+  .step-box {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    page-break-inside: avoid;
+  }
+  .step-number {
+    width: 28px;
+    height: 28px;
+    background: #1a62ff;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 9.5pt;
+    flex-shrink: 0;
+  }
+  .step-body { flex: 1; }
+  .step-body strong { color: #0f172a; font-size: 9.5pt; }
+
+  code {
+    background: #f1f5f9;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: 'Consolas', monospace;
+    font-size: 8.5pt;
+    color: #0f172a;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover">
+  <div class="logo-badge">
+    <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+      <path d="M16 2L3 9.5V22.5L16 30L29 22.5V9.5L16 2Z" stroke="#1a62ff" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M16 2V30M3 9.5L29 22.5M29 9.5L3 22.5" stroke="#1a62ff" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h1>SSCM<span>.</span></h1>
+  <h2>Buku Panduan Operasional & Dokumentasi Pengguna</h2>
+  <div class="tagline">Service Supply Chain Management • Bengkel & Salon Terpadu</div>
+
+  <div class="meta-box">
+    <div><strong>Target Sistem:</strong> Custom Node.js Express 5 + SQLite (TokoJendral Stack)</div>
+    <div><strong>Arsitektur:</strong> Single Outlet, Offline-First Capable, Modular SPA</div>
+    <div><strong>Cakupan Fase 1:</strong> Booking, Papan Antrean, Kasir POS Split Payment, Komisi Staf</div>
+    <div><strong>Dokumentasi Versi:</strong> 1.0.0 (Tahun 2026)</div>
+    <div><strong>Penulis & Arsitek:</strong> HaninSM & Tim Engineering</div>
+  </div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<div class="toc">
+  <h2>Daftar Isi Buku Panduan</h2>
+  <ul>
+    <li>
+      <span><span class="num">1.</span> <span class="title">Konsep Inti: Mengapa Rantai Pasok Jasa (Service SCM) Berbeda?</span></span>
+      <span>Halaman 3</span>
+    </li>
+    <li>
+      <span><span class="num">2.</span> <span class="title">Diagram Alur Bisnis Besar (End-to-End Enterprise Flowchart)</span></span>
+      <span>Halaman 4</span>
+    </li>
+    <li>
+      <span><span class="num">3.</span> <span class="title">Perjalanan Pengguna (User Journey Per Persona)</span></span>
+      <span>Halaman 5</span>
+    </li>
+    <li>
+      <span><span class="num">4.</span> <span class="title">Modul 1: Halaman Login & Keamanan Akses (RBAC)</span></span>
+      <span>Halaman 6</span>
+    </li>
+    <li>
+      <span><span class="num">5.</span> <span class="title">Modul 2: Dashboard Ringkasan & Utilisasi Outlet</span></span>
+      <span>Halaman 7</span>
+    </li>
+    <li>
+      <span><span class="num">6.</span> <span class="title">Modul 3: Papan Layanan & Antrean (The Core SSCM Board)</span></span>
+      <span>Halaman 8</span>
+    </li>
+    <li>
+      <span><span class="num">7.</span> <span class="title">Form Modal Reservasi Baru & Collision Guard Engine</span></span>
+      <span>Halaman 10</span>
+    </li>
+    <li>
+      <span><span class="num">8.</span> <span class="title">Form Modal Pemakaian Sparepart / Bahan Konsumsi (FIFO)</span></span>
+      <span>Halaman 12</span>
+    </li>
+    <li>
+      <span><span class="num">9.</span> <span class="title">Modul 4: Kasir POS & Penyelesaian Tagihan (Split Payment)</span></span>
+      <span>Halaman 13</span>
+    </li>
+    <li>
+      <span><span class="num">10.</span> <span class="title">Modul 5: Rekapitulasi Komisi Karyawan & Payroll</span></span>
+      <span>Halaman 16</span>
+    </li>
+    <li>
+      <span><span class="num">11.</span> <span class="title">Modul 6: Katalog Layanan Jasa & Suku Cadang</span></span>
+      <span>Halaman 18</span>
+    </li>
+    <li>
+      <span><span class="num">12.</span> <span class="title">Tanya Jawab Teknis & Panduan Troubleshooting (FAQ)</span></span>
+      <span>Halaman 19</span>
+    </li>
+  </ul>
+</div>
+
+<!-- ==================== BAB 1 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 1</span> Konsep Inti: Mengapa Service SCM Berbeda?</h2>
+
+<p>
+  Pada bisnis retail tradisional (seperti penjualan barang jadi pada sistem TokoJendral standar), barang fisik dibeli dari supplier, disimpan di gudang, dan dijual kembali. Jika hari ini tidak ada pembeli, barang tersebut tetap berada di rak dan dapat dijual esok hari.
+</p>
+
+<div class="callout callout-yellow">
+  <strong>Karakteristik Kritis Rantai Pasok Jasa (Service Supply Chain):</strong>
+  <p>
+    Pada bisnis layanan (Bengkel Kendaraan, Carwash Detailing, Barbershop, Salon Rambut, dan Klinik Estetika), produk yang dijual adalah <strong>kapasitas waktu dan keahlian manusia</strong>. Karakteristik utamanya adalah:
+  </p>
+  <ul style="margin-left: 20px; margin-top: 6px;">
+    <li><strong>Perishability (Kapasitas Waktu Bersifat Hangus):</strong> Jika Pit Servis Bengkel atau Kursi Salon menganggur selama 1 jam, pendapatan potensial dari 1 jam tersebut hangus selamanya dan tidak dapat ditimbun.</li>
+    <li><strong>Dual-Resource Scheduling:</strong> Layanan jasa membutuhkan sinkronisasi dua sumber daya sekaligus pada detik yang sama: <em>Fasilitas Fisik (Pit/Kursi/Bed)</em> dan <em>Tenaga Kerja Ahli (Mekanik/Stylist/Terapis)</em>.</li>
+    <li><strong>Consumables Depletion:</strong> Jasa sering kali mengonsumsi bahan pendukung (oli, busi, sampo, serum, masker) yang stok fisiknya harus dipotong secara presisi menggunakan metode <strong>FIFO (First-In, First-Out)</strong>.</li>
+  </ul>
+</div>
+
+<p>
+  Sistem <strong>SSCM</strong> ini menjembatani kedua dimensi tersebut ke dalam satu antarmuka modern yang ringan, cepat, dan mandiri tanpa ketergantungan software rumit.
+</p>
+
+<!-- ==================== BAB 2 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 2</span> Diagram Alur Bisnis Besar (End-to-End Enterprise Flowchart)</h2>
+
+<p>
+  Bagan berikut mengilustrasikan siklus hidup sebuah order sejak reservasi pelanggan masuk, pengerjaan di bengkel/salon, penagihan kasir, hingga otomatisasi pencatatan komisi teknisi:
+</p>
+
+<div class="diagram-container">
+  <div style="font-weight: 800; color: #1e293b; margin-bottom: 12px; font-size: 9.5pt;">DIAGRAM ALUR OPERASIONAL 4 PILAR TERPADU:</div>
+  
+  <div class="flow-row">
+    <div class="flow-node">
+      <strong>1. Reservasi / Walk-In</strong><br>
+      Input Nama, Plat/Aset,<br>Pilih Fasilitas & Staf
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node highlight">
+      <strong>Collision Engine</strong><br>
+      Cek Overlap Waktu<br>(Bebas Bentrok)
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node">
+      <strong>2. Papan Antrean</strong><br>
+      Status: Booked ➔ Queued ➔ In Progress
+    </div>
+  </div>
+
+  <div class="flow-row" style="margin-top: 14px;">
+    <div class="flow-node">
+      <strong>3. Eksekusi Tindakan</strong><br>
+      Mekanik/Terapis Kerja + Input Sparepart/Bahan
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node">
+      <strong>Status: Ready to Pay</strong><br>
+      Pekerjaan Selesai,<br>Fasilitas Fisik Bebas
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node highlight">
+      <strong>4. Kasir POS</strong><br>
+      One-Click Load SPK ke Keranjang Kasir
+    </div>
+  </div>
+
+  <div class="flow-row" style="margin-top: 14px;">
+    <div class="flow-node">
+      <strong>Split Payment</strong><br>
+      Cash + QRIS + Transfer
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node highlight">
+      <strong>Atomic Checkout</strong><br>
+      Potong Stok FIFO + Cetak Struk Transaksi
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node">
+      <strong>Hak Komisi Tercatat</strong><br>
+      Otomatis masuk ledger payroll staf
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BAB 3 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 3</span> Perjalanan Pengguna (User Journey)</h2>
+
+<div class="step-box">
+  <div class="step-number">1</div>
+  <div class="step-body">
+    <strong>Front Desk / Resepsionis / Service Advisor (SA)</strong>
+    <p>
+      Menerima kedatangan pelanggan walk-in atau booking via telepon/WhatsApp. SA membuka tombol <code>➕ Buat Reservasi / SPK</code>, menginput nama dan identitas kendaraan (Plat nomor) atau profil kecantikan pelanggan, menentukan estimasi waktu, serta memilih fasilitas dan staf yang tersedia. Jika sistem mendeteksi waktu bentrok, SA langsung diarahkan memilih slot kosong lainnya.
+    </p>
+  </div>
+</div>
+
+<div class="step-box">
+  <div class="step-number">2</div>
+  <div class="step-body">
+    <strong>Teknisi / Mekanik / Hair Stylist / Terapis</strong>
+    <p>
+      Melihat papan antrean di layar tablet/PC workshop. Begitu pelanggan siap di pit/kursi, teknisi menekan tombol <code>Mulai Servis ⚙️</code>. Jika dalam proses servis dibutuhkan penggantian oli, kampas rem, atau pemakaian serum rambut, teknisi menekan <code>+ Bahan</code> untuk mencatat bahan yang diambil dari gudang. Setelah selesai, teknisi menekan <code>Selesai ✅</code>.
+    </p>
+  </div>
+</div>
+
+<div class="step-box">
+  <div class="step-number">3</div>
+  <div class="step-body">
+    <strong>Kasir (Cashier)</strong>
+    <p>
+      Di meja pembayaran, kasir membuka modul <code>Kasir POS</code> dan menekan tombol <code>⚡ Panggil Antrean Servis (Load SPK)</code>. Seluruh biaya jasa pengerjaan dan barang habis pakai otomatis masuk ke keranjang belanja tanpa perlu input manual. Kasir menanyakan metode bayar (bisa Tunai, QRIS, atau Split Payment), memasukkan nominal uang, lalu mencetak struk transaksi.
+    </p>
+  </div>
+</div>
+
+<div class="step-box">
+  <div class="step-number">4</div>
+  <div class="step-body">
+    <strong>Manajer Outlet / Pemilik Toko (Owner)</strong>
+    <p>
+      Memantau efisiensi operasional melalui <code>Dashboard</code> (berapa pit yang terisi, omzet harian). Saat periode penggajian tiba, Owner membuka menu <code>Rekap Komisi</code>, meninjau perolehan hak insentif per mekanik/terapis, dan menekan tombol <code>Cairkan Payout ➔</code> untuk membukukan pencairan komisi staf.
+    </p>
+  </div>
+</div>
+
+<!-- ==================== BAB 4 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 4</span> Modul 1: Halaman Login & Keamanan Akses (RBAC)</h2>
+
+<p>
+  Halaman login dirancang dengan konsep *Floating Glass Card* elegan berlatar belakang gradien desktop. Sistem menggunakan otentikasi berbasis <strong>JSON Web Token (JWT)</strong> dengan enkripsi kata sandi menggunakan algoritma <code>bcrypt</code>.
+</p>
+
+<table class="table-header-blue">
+  <thead>
+    <tr>
+      <th style="width: 25%;">Nama Field / Elemen</th>
+      <th style="width: 20%;">Tipe Input</th>
+      <th style="width: 15%;">Wajib?</th>
+      <th>Penjelasan & Validasi Sistem</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Username Pengguna</strong></td>
+      <td>Text</td>
+      <td>Ya</td>
+      <td>Username akun staf atau admin. Case-insensitive. Contoh: <code>admin</code> atau <code>kasir</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Kata Sandi (Password)</strong></td>
+      <td>Password Masked</td>
+      <td>Ya</td>
+      <td>Kata sandi rahasia akun. Karakter disamarkan demi keamanan visual di lokasi kasir.</td>
+    </tr>
+    <tr>
+      <td><strong>Tombol Masuk ke Aplikasi ➔</strong></td>
+      <td>Button Submit</td>
+      <td>-</td>
+      <td>Mengirim request HTTP POST ke endpoint <code>/api/auth/login</code>. Jika sukses, token disimpan di LocalStorage dan halaman langsung beralih ke <code>/dashboard</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout callout-blue">
+  <strong>Matriks Hak Akses Peran (Role-Based Access Control):</strong>
+  <ul style="margin-left: 20px; margin-top: 4px;">
+    <li><code>admin</code>: Memiliki akses tanpa batas ke semua modul, termasuk pencairan komisi dan master data.</li>
+    <li><code>cashier</code>: Memiliki akses ke Dashboard, Papan Antrean, Kasir POS, dan Katalog Stok.</li>
+  </ul>
+</div>
+
+<!-- ==================== BAB 5 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 5</span> Modul 2: Dashboard Ringkasan & Utilisasi Outlet</h2>
+
+<p>
+  Halaman dashboard menyajikan rangkuman eksekutif performa harian outlet fisik dalam format 4 kartu metrik pintar (*Stat Cards*) dan tabel antrean aktif terkini:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Elemen Tampilan</th>
+      <th style="width: 20%;">Warna Ikon</th>
+      <th>Arti Bisnis & Rumus Kalkulasi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Antrean Aktif</strong></td>
+      <td>🔵 Biru</td>
+      <td>Jumlah total order yang sedang berada pada status <code>BOOKED</code>, <code>QUEUED</code>, <code>IN_PROGRESS</code>, atau <code>READY_TO_PAY</code>. Dilengkapi indikator jumlah unit yang sedang dikerjakan saat ini.</td>
+    </tr>
+    <tr>
+      <td><strong>Utilisasi Bay & Kursi</strong></td>
+      <td>🟢 Hijau</td>
+      <td>Persentase kapasitas fisik yang sedang terisi:
+        $$\text{Utilisasi} = \left(\frac{\text{Jumlah Fasilitas Status OCCUPIED}}{\text{Total Fasilitas Aktif}}\right) \times 100\%$$
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Omzet Sesi Ini</strong></td>
+      <td>🟠 Oranye</td>
+      <td>Akumulasi nominal rupiah dari seluruh transaksi penjualan dan tagihan servis yang telah lunas dibayarkan pada sesi kasir berjalan.</td>
+    </tr>
+    <tr>
+      <td><strong>Komisi Pending</strong></td>
+      <td>🔴 Merah Muda</td>
+      <td>Total nominal rupiah hak komisi karyawan pelaksana yang telah berstatus lunas di kasir namun belum dilakukan pencairan gaji (*payout*).</td>
+    </tr>
+    <tr>
+      <td><strong>Tombol ➕ Buat Reservasi Baru</strong></td>
+      <td>Button Secondary</td>
+      <td>Membuka jendela modal interaktif untuk mendaftarkan jadwal servis baru secara instan.</td>
+    </tr>
+    <tr>
+      <td><strong>Tombol ⚡ Buka Papan Antrean</strong></td>
+      <td>Button Primary</td>
+      <td>Pintasan navigasi langsung menuju papan kanban operasional servis.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ==================== BAB 6 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 6</span> Modul 3: Papan Layanan & Antrean (The Core SSCM Board)</h2>
+
+<p>
+  Papan Antrean adalah jantung operasional layanan servis. Terdiri atas <strong>4 Kolom Status Kanban</strong> yang merefleksikan pergerakan unit kerja secara visual:
+</p>
+
+<div class="diagram-container">
+  <div class="flow-row">
+    <div class="flow-node">
+      <strong>1. RESERVASI (BOOKED)</strong><br>
+      Jadwal masa depan.<br>Slot fasilitas terkunci.
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node">
+      <strong>2. MENUNGGU (QUEUED)</strong><br>
+      Pelanggan sudah tiba.<br>Menunggu giliran pit.
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node highlight">
+      <strong>3. DIKERJAKAN (IN PROGRESS)</strong><br>
+      Sedang dikerjakan teknisi.<br>Bisa tambah part/bahan.
+    </div>
+    <div class="flow-arrow">➔</div>
+    <div class="flow-node">
+      <strong>4. SIAP BAYAR (READY)</strong><br>
+      Selesai pengerjaan.<br>Fasilitas fisik bebas.
+    </div>
+  </div>
+</div>
+
+<h3>Fungsi Setiap Tombol Pada Kartu Layanan (Service Card)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 22%;">Label Tombol</th>
+      <th style="width: 18%;">Muncul Pada Status</th>
+      <th>Fungsi & Perubahan Sistem</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="badge-btn">Pelanggan Tiba ➔</span></td>
+      <td><code>BOOKED</code></td>
+      <td>Menandai bahwa pelanggan telah hadir di lokasi outlet. Status berubah menjadi <code>QUEUED</code> (masuk ke antrean fisik).</td>
+    </tr>
+    <tr>
+      <td><span class="badge-btn">Mulai Servis ⚙️</span></td>
+      <td><code>QUEUED</code></td>
+      <td>Memulai pengerjaan tindakan. Status berubah menjadi <code>IN_PROGRESS</code>, mencatat waktu <code>actual_start</code>, dan mengunci fasilitas terkait menjadi status <code>OCCUPIED</code>.</td>
+    </tr>
+    <tr>
+      <td><span class="badge-btn">+ Bahan</span></td>
+      <td><code>IN_PROGRESS</code></td>
+      <td>Membuka modal dialog untuk menambahkan suku cadang, pelumas mesin, atau serum perawatan yang digunakan saat tindakan servis berlangsung.</td>
+    </tr>
+    <tr>
+      <td><span class="badge-btn">Selesai ✅</span></td>
+      <td><code>IN_PROGRESS</code></td>
+      <td>Menandai tindakan pengerjaan fisik telah tuntas. Status berubah menjadi <code>READY_TO_PAY</code>, mencatat <code>actual_end</code>, dan otomatis melepaskan fasilitas fisik kembali menjadi <code>AVAILABLE</code> untuk antrean berikutnya.</td>
+    </tr>
+    <tr>
+      <td><span class="badge-btn">Bayar di Kasir 💳</span></td>
+      <td><code>READY_TO_PAY</code></td>
+      <td>Membuka halaman kasir POS dan secara otomatis menarik seluruh rincian SPK ke dalam keranjang belanja tagihan kasir.</td>
+    </tr>
+    <tr>
+      <td><span class="badge-btn">🔍 (Detail)</span></td>
+      <td>Semua Status</td>
+      <td>Membuka kartu detail komprehensif SPK (rincian item, waktu pengerjaan, catatan teknisi, estimasi biaya).</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ==================== BAB 7 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 7</span> Form Modal Reservasi Baru & Collision Guard Engine</h2>
+
+<p>
+  Ketika menekan tombol <code>➕ Buat Reservasi / SPK</code>, modal form reservasi terpadu akan muncul. Form ini terintegrasi langsung dengan <strong>Collision Engine</strong> yang secara otomatis mencegah tabrakan jadwal (*double-booking*).
+</p>
+
+<table class="table-header-blue">
+  <thead>
+    <tr>
+      <th style="width: 25%;">Nama Field</th>
+      <th style="width: 15%;">Tipe Field</th>
+      <th style="width: 10%;">Wajib?</th>
+      <th>Penjelasan & Validasi Real-time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Lini Bisnis</strong></td>
+      <td>Dropdown</td>
+      <td>Ya</td>
+      <td>Pilihan antara <code>🔧 Bengkel & Carwash</code> atau <code>✂️ Salon & Treatment</code>. Mengubah label aset dan filter fasilitas/staf secara dinamis.</td>
+    </tr>
+    <tr>
+      <td><strong>Identitas Aset Pelanggan</strong></td>
+      <td>Text</td>
+      <td>Ya</td>
+      <td>
+        * <em>Bengkel:</em> Nomor Polisi & Jenis Kendaraan (misal: <code>B 4128 SZZ (Vario 160)</code>).<br>
+        * <em>Salon:</em> Tipe Perawatan/Profil Rambut (misal: <code>Rambut Bob Pendek (Kulit Sensitif)</code>).
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Nama Pelanggan</strong></td>
+      <td>Text</td>
+      <td>Ya</td>
+      <td>Nama lengkap konsumen penerima layanan.</td>
+    </tr>
+    <tr>
+      <td><strong>No. HP / WhatsApp</strong></td>
+      <td>Text Phone</td>
+      <td>Tidak</td>
+      <td>Nomor kontak pelanggan untuk konfirmasi notifikasi servis.</td>
+    </tr>
+    <tr>
+      <td><strong>Waktu Mulai</strong></td>
+      <td>Datetime-Local</td>
+      <td>Ya</td>
+      <td>Tanggal dan jam rencana dimulainya pengerjaan. Memicu pengecekan bentrok jadwal.</td>
+    </tr>
+    <tr>
+      <td><strong>Waktu Selesai</strong></td>
+      <td>Datetime-Local</td>
+      <td>Ya</td>
+      <td>Estimasi jam selesai. Wajib lebih besar dari waktu mulai. Memicu pengecekan bentrok jadwal.</td>
+    </tr>
+    <tr>
+      <td><strong>Fasilitas Fisik</strong></td>
+      <td>Dropdown</td>
+      <td>Ya</td>
+      <td>Pilihan stasiun kerja fisik berkapasitas 1 unit: Pit Servis 1, Pit Servis 2, Hidrolik Cuci, Kursi Styling, atau Bed Facial.</td>
+    </tr>
+    <tr>
+      <td><strong>Tenaga Ahli</strong></td>
+      <td>Dropdown</td>
+      <td>Ya</td>
+      <td>Pilihan teknisi atau terapis penanggung jawab tindakan (misal: Budi Hartono - Mekanik atau Dewi Lestari - Stylist). Dilengkapi info persentase komisi standar staf.</td>
+    </tr>
+    <tr>
+      <td><strong>Pilih Layanan Jasa Utama</strong></td>
+      <td>Dropdown</td>
+      <td>Ya</td>
+      <td>Katalog paket servis awal (misal: <em>Tune-Up Injeksi Rp 75.000</em> atau <em>Haircut Premium Rp 60.000</em>).</td>
+    </tr>
+    <tr>
+      <td><strong>Catatan Keluhan</strong></td>
+      <td>Textarea</td>
+      <td>Tidak</td>
+      <td>Diagnosa awal, permintaan khusus pelanggan, atau riwayat keluhan mesin/perawatan.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout callout-red">
+  <strong>Cara Kerja Collision Engine (Deteksi Bentrok Jadwal):</strong>
+  <p>
+    Setiap kali pengguna mengubah pilihan jam, fasilitas, atau staf, sistem secara otomatis mengeksekusi query validasi ke backend Express:
+  </p>
+  <code>(Waktu Mulai Baru &lt; Waktu Selesai Terdaftar) AND (Waktu Selesai Baru &gt; Waktu Mulai Terdaftar)</code>
+  <p style="margin-top: 6px;">
+    Jika Fasilitas atau Staf tersebut telah terjadwal pada SPK lain yang belum selesai, banner merah <strong>"⚠️ Fasilitas/Staf sudah terpakai..."</strong> akan muncul seketika, dan tombol simpan otomatis <strong>dinonaktifkan (disabled)</strong> untuk menjamin <em>zero-collision guarantee</em>.
+  </p>
+</div>
+
+<!-- ==================== BAB 8 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 8</span> Form Modal Pemakaian Sparepart / Bahan (FIFO)</h2>
+
+<p>
+  Tindakan servis sering kali membutuhkan material habis pakai yang diambil langsung dari gudang toko. Teknisi dapat mencatatnya kapan saja selama order berstatus <code>IN_PROGRESS</code>.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Nama Field</th>
+      <th style="width: 15%;">Tipe Field</th>
+      <th>Penjelasan & Validasi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Pilih Sparepart / Bahan</strong></td>
+      <td>Dropdown</td>
+      <td>Daftar seluruh item bertipe <code>CONSUMABLE</code> sesuai lini bisnis. Menampilkan nama barang, harga satuan resmi, dan <strong>sisa stok fisik riil</strong> di gudang toko.</td>
+    </tr>
+    <tr>
+      <td><strong>Jumlah Pemakaian (Qty)</strong></td>
+      <td>Number</td>
+      <td>Kuantitas yang digunakan (misal: 1 botol oli atau 1 busi). Mendukung angka desimal untuk bahan berbasis liter atau gram.</td>
+    </tr>
+    <tr>
+      <td><strong>Tombol ➕ Masukkan ke SPK</strong></td>
+      <td>Button Primary</td>
+      <td>Menyimpan baris pemakaian bahan ke dalam database SPK dan secara otomatis memperbarui estimasi grand total tagihan.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ==================== BAB 9 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 9</span> Modul 4: Kasir POS & Split Payment (FIFO Depletion)</h2>
+
+<p>
+  Modul Kasir POS mengadopsi tampilan layar ganda (*Split View*) TokoJendral: <strong>Panel Katalog Barang/Jasa</strong> di sisi kiri dan <strong>Panel Keranjang Tagihan Aktif</strong> di sisi kanan.
+</p>
+
+<h3>Fitur 1-Click Load Service Order</h3>
+<p>
+  Kasir tidak perlu menghitung ulang biaya jasa atau mencari sparepart secara manual. Cukup menekan tombol <code>⚡ Panggil Antrean Servis (Load SPK)</code>, memilih order yang sudah berstatus <code>READY_TO_PAY</code>, maka seluruh komponen biaya langsung tersusun rapi di keranjang belanja.
+</p>
+
+<h3>Modal Form Split Payment (Penyelesaian Pembayaran)</h3>
+
+<table class="table-header-blue">
+  <thead>
+    <tr>
+      <th style="width: 25%;">Metode Pembayaran</th>
+      <th style="width: 15%;">Tipe Input</th>
+      <th>Penjelasan Alur & Validasi Pembayaran</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>💵 Tunai (CASH)</strong></td>
+      <td>Number Currency</td>
+      <td>Nominal uang tunai fisik yang diserahkan pelanggan ke laci kasir. Default terisi penuh senilai grand total saat modal dibuka.</td>
+    </tr>
+    <tr>
+      <td><strong>📱 Non-Tunai / QRIS</strong></td>
+      <td>Number Currency</td>
+      <td>Nominal pembayaran yang dipindai melalui barcode QRIS dinamis/statis outlet.</td>
+    </tr>
+    <tr>
+      <td><strong>🏦 Transfer Bank</strong></td>
+      <td>Number Currency</td>
+      <td>Nominal pembayaran melalui transfer rekening bank toko / debit EDC.</td>
+    </tr>
+    <tr>
+      <td><strong>Kalkulator Kembalian</strong></td>
+      <td>Display Text</td>
+      <td>Menampilkan perhitungan uang kembali secara instan:
+        $$\text{Kembalian} = (\text{CASH} + \text{QRIS} + \text{TRANSFER}) - \text{Grand Total}$$
+        Jika total bayar masih kurang, indikator berubah merah dan tombol bayar terkunci.
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Tombol Konfirmasi & Cetak Struk</strong></td>
+      <td>Button Submit</td>
+      <td>Memicu eksekusi <strong>Database Transaction</strong> di server backend.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout callout-green">
+  <strong>Apa yang Terjadi di Balik Layar Saat Tombol Bayar Ditekan? (Under The Hood)</strong>
+  <ol style="margin-left: 20px; margin-top: 6px;">
+    <li><strong>Pencatatan Faktur Penjualan:</strong> Diterbitkan nomor faktur unik (misal: <code>INV-202611-0001</code>) beserta rincian metode pembayaran pada tabel <code>transactions</code> dan <code>transaction_payments</code>.</li>
+    <li><strong>Pemotongan Stok FIFO Otomatis:</strong> Untuk seluruh barang habis pakai (oli, sparepart, serum), sistem memotong kuantitas dari batch persediaan dengan tanggal penerimaan terlama (FIFO) dan mengunci snapshot HPP modal riil.</li>
+    <li><strong>Penerbitan Hak Komisi Karyawan:</strong> Sistem mengalikan tarif jasa dengan persentase hak staf dan menyimpannya ke tabel <code>commission_logs</code> berstatus <code>PENDING</code>.</li>
+    <li><strong>Pelepasan Order & Fasilitas:</strong> Status order diubah menjadi <code>COMPLETED</code>, dan fasilitas fisik (Pit/Kursi) dipastikan berstatus <code>AVAILABLE</code>.</li>
+  </ol>
+</div>
+
+<!-- ==================== BAB 10 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 10</span> Modul 5: Rekapitulasi Komisi Karyawan & Payroll</h2>
+
+<p>
+  Modul ini memfasilitasi transparansi pembagian hasil dan insentif antara pemilik usaha (*owner*) dengan staf pelaksana (mekanik, stylist, dan terapis).
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Kolom Tabel</th>
+      <th style="width: 20%;">Format Data</th>
+      <th>Penjelasan Operasional</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Kode & Nama Staf</strong></td>
+      <td>Text Badge</td>
+      <td>Identitas karyawan pelaksana (misal: <code>MEC-01</code> Budi Hartono).</td>
+    </tr>
+    <tr>
+      <td><strong>Divisi & Jabatan</strong></td>
+      <td>Badge Divisi</td>
+      <td>Unit bisnis (Bengkel vs Salon) dan titel jabatan (Mekanik, Stylist, Terapis).</td>
+    </tr>
+    <tr>
+      <td><strong>Total SPK</strong></td>
+      <td>Angka Numerik</td>
+      <td>Berapa banyak surat perintah kerja yang telah diselesaikan oleh staf bersangkutan.</td>
+    </tr>
+    <tr>
+      <td><strong>Omzet Servis</strong></td>
+      <td>Rupiah (IDR)</td>
+      <td>Total pendapatan bruto dari komponen tarif jasa murni yang dihasilkan oleh staf tersebut.</td>
+    </tr>
+    <tr>
+      <td><strong>Total Hak Komisi</strong></td>
+      <td>Rupiah (IDR)</td>
+      <td>Akumulasi komisi yang berhak didapatkan karyawan sejak awal operasional.</td>
+    </tr>
+    <tr>
+      <td><strong>Status Pending</strong></td>
+      <td>Rupiah (IDR) Kuning</td>
+      <td>Nominal komisi yang saat ini belum dicairkan pada periode gaji berjalan.</td>
+    </tr>
+    <tr>
+      <td><strong>Tombol Cairkan Payout ➔</strong></td>
+      <td>Button Primary Small</td>
+      <td>Memicu dialog konfirmasi pembayaran komisi. Setelah dikonfirmasi, status log berubah menjadi <code>PAID_OUT</code> dan nilai pending kembali menjadi nol.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ==================== BAB 11 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 11</span> Modul 6: Katalog Layanan Jasa & Suku Cadang</h2>
+
+<p>
+  Menyajikan master data item yang dijual atau digunakan di outlet fisik. Terbagi menjadi dua kategori utama: <strong>JASA (Service)</strong> dan <strong>BAHAN (Consumable)</strong>.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Kolom</th>
+      <th>Arti & Fungsi</th>
+      <th>Contoh Nilai</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>SKU</strong></td>
+      <td>Kode unik pengenal produk atau paket layanan.</td>
+      <td><code>SRV-W01</code> (Jasa), <code>PRT-W01</code> (Part)</td>
+    </tr>
+    <tr>
+      <td><strong>Nama Item</strong></td>
+      <td>Nama lengkap yang tercetak di struk nota kasir.</td>
+      <td>Servis Ringan & Tune Up Injeksi</td>
+    </tr>
+    <tr>
+      <td><strong>Unit Bisnis</strong></td>
+      <td>Kategori peruntukan fasilitas (Bengkel, Salon, atau Umum).</td>
+      <td><span class="badge badge-workshop">BENGKEL</span></td>
+    </tr>
+    <tr>
+      <td><strong>Tipe Item</strong></td>
+      <td>Membedakan perlakuan inventori (Jasa tidak memiliki batas stok).</td>
+      <td><code>JASA</code> atau <code>BAHAN/PART</code></td>
+    </tr>
+    <tr>
+      <td><strong>Tarif / Harga</strong></td>
+      <td>Nilai jual yang dibebankan kepada pelanggan.</td>
+      <td>Rp 75.000 / Rp 65.000</td>
+    </tr>
+    <tr>
+      <td><strong>Komisi %</strong></td>
+      <td>Persentase standar hak komisi staf untuk layanan ini.</td>
+      <td>20%</td>
+    </tr>
+    <tr>
+      <td><strong>Stok (FIFO)</strong></td>
+      <td>Sisa stok fisik di gudang toko yang terlacak per batch.</td>
+      <td>24 BOTOL</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ==================== BAB 12 ==================== -->
+<h2 class="section-title"><span class="sec-num">BAB 12</span> Tanya Jawab (FAQ) & Panduan Troubleshooting</h2>
+
+<div class="callout callout-blue">
+  <strong>Q1: Apakah sistem ini membutuhkan koneksi internet?</strong>
+  <p>
+    <strong>A:</strong> Tidak wajib. Sistem ini didesain <em>offline-first</em> dengan database lokal SQLite (<code>better-sqlite3</code>). Sistem dapat berjalan di satu komputer kasir lokal secara offline atau dihubungkan ke jaringan WiFi lokal outlet agar tablet mekanik/terapis dapat mengaksesnya melalui IP lokal (misal: <code>http://192.168.1.5:3000</code>).
+  </p>
+</div>
+
+<div class="callout callout-blue">
+  <strong>Q2: Mengapa tombol "Simpan SPK" tidak bisa diklik saat membuat reservasi?</strong>
+  <p>
+    <strong>A:</strong> Ini adalah fitur pengaman <em>Collision Guard</em>. Periksa banner peringatan di bagian atas form. Jika fasilitas fisik (Bay/Kursi) atau staf pelaksana sedang bertugas pada jam tersebut, pilih jam pengerjaan lain atau alokasikan ke fasilitas/staf lain yang masih berstatus <em>Available</em>.
+  </p>
+</div>
+
+<div class="callout callout-blue">
+  <strong>Q3: Bagaimana jika stok suku cadang fisik di gudang habis saat teknisi menginput pengerjaan?</strong>
+  <p>
+    <strong>A:</strong> Sistem akan menampilkan informasi sisa stok pada dropdown pemakaian bahan. Pemilik toko atau admin dapat menambahkan stok batch baru melalui pembelian inventori untuk memperbarui lapisan FIFO.
+  </p>
+</div>
+
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #cbd5e1; text-align: center; font-size: 8.5pt; color: #94a3b8;">
+  © 2026 SSCM (Service Supply Chain Management) System • Invo POS Architecture • Diterbitkan untuk HaninSM Outlet Pusat.
+</div>
+
+</body>
+</html>

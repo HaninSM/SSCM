@@ -7,7 +7,9 @@ Sistem ini mentransformasikan konsep bisnis **odoo-SSCM** ke dalam arsitektur ri
 
 ---
 
-## 📌 Dokumen Referensi
+## 📌 Dokumen Referensi & Tutorial
+* 📖 **Buku Panduan & Tutorial Interaktif (HTML):** [docs/tutorial.html](file:///c:/Users/ZYREX/Documents/SSCM/docs/tutorial.html)
+* 📕 **Dokumen Tutorial Lengkap Siap Cetak (PDF):** [docs/Tutorial_SSCM_System.pdf](file:///c:/Users/ZYREX/Documents/SSCM/docs/Tutorial_SSCM_System.pdf)
 * 📋 **Product Requirement Document:** [PRD.md](file:///c:/Users/ZYREX/Documents/SSCM/PRD.md)
 * 🏗️ **Arsitektur Teknis & Skema Database:** [ARCHITECTURE.md](file:///c:/Users/ZYREX/Documents/SSCM/ARCHITECTURE.md)
 
