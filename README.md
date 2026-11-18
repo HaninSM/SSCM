@@ -132,23 +132,38 @@ Setelah menjalankan `npm run seed` (atau `npm run setup`), database SQLite lokal
   * `CSM-S03` — Ampul Serum Vitamin C Glow (Harga: Rp 50.000, Stok: 20 Ampul)
 
 ### 5. Lapisan Persediaan FIFO (Inventory Batches)
-Tercatat 7 batch masuk dengan tanggal penerimaan berbeda untuk menguji akurasi pemotongan HPP FIFO saat checkout kasir.
+Tercatat 9 batch stok masuk dengan tanggal penerimaan berbeda dan stok melimpah untuk menjamin kelancaran simulasi pemotongan HPP FIFO saat checkout kasir.
 
-### 6. Surat Perintah Kerja (SPK) Aktif Bawaan
-1. **`SPK-W202611-001` (Hendra Gunawan - Bengkel):**
-   * *Status:* `IN_PROGRESS` (Sedang Dikerjakan)
-   * *Aset:* `B 4128 SZZ (Honda Vario 160)`
-   * *Alokasi:* Pit Servis 1 (`BAY-01`) • Mekanik Budi Hartono
-   * *Rincian:* Servis Ringan + Oli Matic (Estimasi Total: Rp 140.000)
-2. **`SPK-S202611-002` (Jessica Melina - Salon):**
-   * *Status:* `READY_TO_PAY` (Pengerjaan Selesai & Siap Ditarik ke Kasir POS)
-   * *Aset:* `Rambut Layer Pendek (Kulit Sensitif)`
-   * *Alokasi:* Kursi Styling 1 (`CHR-01`) • Stylist Dewi Lestari
-   * *Rincian:* Haircut + Creambath + Serum Argan + Krim Masker (Estimasi Total: Rp 230.000)
-3. **`SPK-W202611-003` (Bambang Sudiro - Bengkel):**
-   * *Status:* `BOOKED` (Reservasi Mendatang)
-   * *Aset:* `D 1944 AD (Yamaha NMAX)`
-   * *Alokasi:* Pit Servis 2 (`BAY-02`) • Mekanik Agus Pratama (Rencana: Servis Ringan + Kampas Rem)
+### 6. Profil Aset Pelanggan & Rekam Medis Servis (`customer_assets`)
+Tersedia 8 aset kendaraan dan profil salon terintegrasi:
+* `B 4128 SZZ` — Hendra Gunawan (Honda Vario 160)
+* `D 1944 AD` — Bambang Sudiro (Yamaha NMAX 155)
+* `B 8899 KLS` — Ahmad Fauzi (Toyota Avanza 1.5G)
+* `B 2341 TYA` — Rian Santoso (Honda PCX 160)
+* `CUST-SLN-001` — Jessica Melina (Rambut Bob Pendek, *Peringatan Alergi: Sensitif amonia & sulfur*)
+* `CUST-SLN-002` — Clarissa Putri (Rambut Panjang Bergelombang, Perawatan Keratin)
+* `CUST-SLN-003` — Nadia Safitri (Rambut Lurus Sebahu, *Peringatan Alergi: Sensitif minyak zaitun murni*)
+* `CUST-SLN-004` — Siti Nurhaliza (Kulit Wajah Kering & Kusam, *Peringatan Alergi: Sensitif scrub kasar*)
+
+### 7. Faktur Penjualan & Omzet Realistis (`transactions`)
+Tersedia **8 Faktur Penjualan Lunas** senilai **Rp 1.213.000 omzet** dengan simulasi metode pembayaran nyata (*Split Payment* Tunai, QRIS BCA/Gopay, dan Transfer Mandiri/BCA).
+
+### 8. Hak Komisi Karyawan Siap Payout (`commission_logs`)
+Tersedia **7 catatan komisi berstatus `PENDING`** senilai **Rp 174.500** yang langsung dapat diuji fitur pencairannya (*Payout*) di modul **Rekap Komisi**:
+* **Budi Hartono (`MEC-01`):** Rp 42.000 (Pending Payout dari 2 SPK)
+* **Agus Pratama (`MEC-02`):** Rp 26.250 (Pending Payout dari 2 SPK)
+* **Dewi Lestari (`STY-01`):** Rp 71.250 (Pending Payout dari 2 SPK) + Rp 24.000 (*Histori Paid Out*)
+* **Rina Anggraini (`THR-01`):** Rp 35.000 (Pending Payout dari 1 SPK)
+
+### 9. Antrean Aktif di Papan Layanan (Queue Board)
+* `BOOKED` : 1 Reservasi (Clarissa Putri - Perawatan Weekend)
+* `QUEUED` : 2 Antrean Menunggu (Rian Santoso & SPK Rework Garansi Poni)
+* `IN_PROGRESS` : 1 Pengerjaan Berlangsung (Hendra Gunawan di Pit 1)
+* `READY_TO_PAY` : 1 Siap Bayar di Kasir (Jessica Melina di Kursi 1)
+
+### 10. Klaim Garansi & SPK Rework Rp 0
+* `CLM-202611-001` : Klaim pengerjaan rem berdecit (Bambang Sudiro - Status: `SUBMITTED`, siap diinspeksi QC)
+* `CLM-202611-002` : Klaim revisi potongan poni (Clarissa Putri - Status: `APPROVED`, otomatis menerbitkan SPK Rework `SPK-GAR-S202611-0001` bernilai Rp 0)
 
 ---
 
