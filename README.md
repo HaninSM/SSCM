@@ -60,6 +60,10 @@ SSCM/
 │   ├── migrations/               # Skema tabel Knex (resources, orders, commissions)
 │   ├── seeds/                    # Data awal (bay bengkel, kursi salon, staf, paket jasa)
 │   └── sscm.db                   # Database SQLite lokal
+├── docs/
+│   ├── tutorial.html             # Buku panduan & tutorial interaktif
+│   └── Tutorial_SSCM_System.pdf  # Dokumentasi PDF siap cetak A4
+├── generate-pdf.js               # Script generator PDF berbasis Puppeteer & Edge
 ├── src/
 │   ├── config/                   # Konfigurasi database & environment
 │   ├── controllers/              # Handler HTTP request (Service, Booking, Commission)
@@ -82,3 +86,88 @@ SSCM/
 ├── PRD.md                        # Product Requirement Document
 └── README.md                     # Dokumentasi utama proyek
 ```
+
+---
+
+## 🧪 Data Awal Bawaan (Seed Data Specification)
+
+Setelah menjalankan `npm run seed` (atau `npm run setup`), database SQLite lokal secara otomatis terisi dengan data komprehensif untuk pengujian dan simulasi operasional:
+
+### 1. Akun Pengguna (Demo Logins)
+| Username | Password | Role / Peran | Nama Pengguna | Akses Modul |
+| :--- | :--- | :--- | :--- | :--- |
+| `admin` | `admin123` | `admin` | Super Admin | Akses penuh (Dashboard, Antrean, POS, Rekap Komisi, Master Data) |
+| `kasir` | `kasir123` | `cashier` | Siti Kasir | Akses operasional harian (Dashboard, Antrean, Kasir POS) |
+
+### 2. Fasilitas Fisik Terdaftar (Service Resources)
+* **Divisi Bengkel & Carwash (`WORKSHOP`):**
+  * `BAY-01` — Pit Servis Motor 1 (*Status: OCCUPIED*)
+  * `BAY-02` — Pit Servis Motor 2 (*Status: AVAILABLE*)
+  * `LIFT-01` — Hidrolik Cuci / Carwash 1 (*Status: AVAILABLE*)
+* **Divisi Salon & Treatment (`SALON`):**
+  * `CHR-01` — Kursi Styling & Potong 1 (*Status: OCCUPIED*)
+  * `CHR-02` — Kursi Styling & Potong 2 (*Status: AVAILABLE*)
+  * `BED-01` — Bed Facial & Spa 1 (*Status: AVAILABLE*)
+
+### 3. Tenaga Ahli & Teknisi (Service Staff)
+* `MEC-01` — **Budi Hartono** (Divisi Bengkel, Jabatan: Mekanik, Komisi: 20% + Insentif Flat Rp 5.000)
+* `MEC-02` — **Agus Pratama** (Divisi Bengkel, Jabatan: Mekanik, Komisi: 15% + Insentif Flat Rp 3.000)
+* `STY-01` — **Dewi Lestari** (Divisi Salon, Jabatan: Stylist, Komisi: 25% + Insentif Flat Rp 5.000)
+* `THR-01` — **Rina Anggraini** (Divisi Salon, Jabatan: Terapis, Komisi: 20% + Insentif Flat Rp 5.000)
+
+### 4. Katalog Layanan Jasa & Suku Cadang (Items Catalog)
+* **Jasa Layanan (`SERVICE`):**
+  * `SRV-W01` — Servis Ringan & Tune Up Injeksi (Tarif: Rp 75.000, Durasi: 45 mnt, Komisi: 20%)
+  * `SRV-W02` — Jasa Ganti Oli & Pengecekan Rem (Tarif: Rp 25.000, Durasi: 20 mnt, Komisi: 15%)
+  * `SRV-W03` — Cuci Motor Detailing & Semir Ban (Tarif: Rp 35.000, Durasi: 30 mnt, Komisi: 20%)
+  * `SRV-S01` — Haircut Premium & Wash Styling (Tarif: Rp 60.000, Durasi: 40 mnt, Komisi: 25%)
+  * `SRV-S02` — Creambath Tradisional + Pijat Leher (Tarif: Rp 95.000, Durasi: 60 mnt, Komisi: 20%)
+  * `SRV-S03` — Facial Brightening & Totok Wajah (Tarif: Rp 150.000, Durasi: 75 mnt, Komisi: 20%)
+* **Bahan Konsumsi / Sparepart (`CONSUMABLE`):**
+  * `PRT-W01` — Oli Mesin Matic 10W-30 0.8L (Harga: Rp 65.000, Stok: 24 Botol)
+  * `PRT-W02` — Busi Standar U27EPR9 (Harga: Rp 35.000, Stok: 15 Pcs)
+  * `PRT-W03` — Kampas Rem Cakram Depan (Harga: Rp 55.000, Stok: 10 Set)
+  * `CSM-S01` — Serum Rambut Argan Oil 10ml (Harga: Rp 35.000, Stok: 30 Botol)
+  * `CSM-S02` — Krim Masker Creambath Lidah Buaya 250g (Harga: Rp 40.000, Stok: 18 Jar)
+  * `CSM-S03` — Ampul Serum Vitamin C Glow (Harga: Rp 50.000, Stok: 20 Ampul)
+
+### 5. Lapisan Persediaan FIFO (Inventory Batches)
+Tercatat 7 batch masuk dengan tanggal penerimaan berbeda untuk menguji akurasi pemotongan HPP FIFO saat checkout kasir.
+
+### 6. Surat Perintah Kerja (SPK) Aktif Bawaan
+1. **`SPK-W202611-001` (Hendra Gunawan - Bengkel):**
+   * *Status:* `IN_PROGRESS` (Sedang Dikerjakan)
+   * *Aset:* `B 4128 SZZ (Honda Vario 160)`
+   * *Alokasi:* Pit Servis 1 (`BAY-01`) • Mekanik Budi Hartono
+   * *Rincian:* Servis Ringan + Oli Matic (Estimasi Total: Rp 140.000)
+2. **`SPK-S202611-002` (Jessica Melina - Salon):**
+   * *Status:* `READY_TO_PAY` (Pengerjaan Selesai & Siap Ditarik ke Kasir POS)
+   * *Aset:* `Rambut Layer Pendek (Kulit Sensitif)`
+   * *Alokasi:* Kursi Styling 1 (`CHR-01`) • Stylist Dewi Lestari
+   * *Rincian:* Haircut + Creambath + Serum Argan + Krim Masker (Estimasi Total: Rp 230.000)
+3. **`SPK-W202611-003` (Bambang Sudiro - Bengkel):**
+   * *Status:* `BOOKED` (Reservasi Mendatang)
+   * *Aset:* `D 1944 AD (Yamaha NMAX)`
+   * *Alokasi:* Pit Servis 2 (`BAY-02`) • Mekanik Agus Pratama (Rencana: Servis Ringan + Kampas Rem)
+
+---
+
+## ⚡ Perintah Cepat (CLI Commands)
+
+```bash
+# Menjalankan server aplikasi
+npm start
+
+# Mode development (auto-reload)
+npm run dev
+
+# Reset dan isi ulang data awal (Clean Re-seed)
+npm run seed
+
+# Setup ulang database dari awal (Migrate + Seed)
+npm run setup
+
+# Kompilasi ulang tutorial HTML ke format PDF
+node generate-pdf.js
+```
+
